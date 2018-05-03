@@ -1,0 +1,83 @@
+id: islandora_basic_image
+label: Basic Image Objects
+migration_group: islandora_7x
+
+source:
+  plugin: islandora
+  solr_base_url: http://10.0.2.2:9080/solr
+  fedora_base_url: http://10.0.2.2:9080/fedora
+
+  data_fetcher_plugin: http
+  authentication:
+    plugin: basic
+    username: fedoraAdmin
+    password: fedoraAdmin
+
+  content_model_field: RELS_EXT_hasModel_uri_ms
+  content_model: islandora:sp_basic_image
+
+  data_parser_plugin: authenticated_xml
+  item_selector: /foxml:digitalObject
+  fields:
+    -
+      name: PID
+      label: 'PID'
+      selector: '@PID'
+    -
+      name: created
+      label: 'Created Date'
+      selector: 'foxml:objectProperties/foxml:property[@NAME="info:fedora/fedora-system:def/model#createdDate"]/@VALUE'
+    -
+      name: lastmodified
+      label: 'Last Modified Date'
+      selector: 'foxml:objectProperties/foxml:property[@NAME="info:fedora/fedora-system:def/model#lastModifiedDate"]/@VALUE'
+    -
+      name: label
+      label: 'Object label'
+      selector: 'foxml:objectProperties/foxml:property[@NAME="info:fedora/fedora-system:def/model#label"]/@VALUE'
+    -
+      name: member_of_collection
+      label: "Member of Collections"
+      selector: 'foxml:datastream[@ID = "RELS-EXT" and @CONTROL_GROUP = "X" ]/foxml:datastreamVersion[position() = last()]/foxml:xmlContent/rdf:RDF/rdf:Description/fedora:isMemberOfCollection'
+    -
+      name: member_of
+      label: "Member Of"
+      selector: 'foxml:datastream[@ID = "RELS-EXT" and @CONTROL_GROUP = "X" ]/foxml:datastreamVersion[position() = last()]/foxml:xmlContent/rdf:RDF/rdf:Description/fedora:isMemberOf'
+
+  ids:
+    PID:
+      type: string
+
+destination:
+  plugin: entity:node
+
+process:
+  type:
+    plugin: default_value
+    default_value: islandora_image
+  title: label
+  created:
+    plugin: format_date
+    from_format: Y-m-d\TH:i:s.u\Z
+    to_format: U
+    source: created
+    settings:
+      validate_format: false
+  updated:
+    plugin: format_date
+    from_format: Y-m-d\TH:i:s.u\Z
+    to_format: U
+    source: lastmodified
+    settings:
+      validate_format: false
+  field_member_of: member_of
+  field_member_of_collection: member_of_collection
+
+  field_description: abstract
+  uid: constants/uid_root
+
+dependencies:
+  enforced:
+    module:
+      - migrate_7x_claw
+      - migrate_plus
