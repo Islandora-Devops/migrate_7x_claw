@@ -141,13 +141,8 @@ class Islandora extends SourcePluginExtension {
   protected function doCount() {
     if (is_null($this->count)) {
       $query = $this->getQuery(0,0);
-      $result = $this->httpClient->get($query);
-      if ($result->getStatusCode() != 200) {
-        throw new MigrateException(t("Unable to count from Solr, got !e", [
-          '!e' => $result->getReasonPhrase(),
-        ]));
-      }
-      $body = json_decode($result->getBody()->getContents(), TRUE);
+      $result = $this->getDataFetcherPlugin()->getResponseContent($query)->getContents();
+      $body = json_decode($result, TRUE);
       $this->count = $body['response']['numFound'];
       $this->batches = intdiv($this->count, $this->batchSize) + ($this->count % $this->batchSize ? 1 : 0);
     }
@@ -210,14 +205,9 @@ class Islandora extends SourcePluginExtension {
 
   private function getPids($start=0) {
     $query = $this->getQuery($start, $this->batchSize);
-    $result = $this->httpClient->get($query);
-    if ($result->getStatusCode() != 200) {
-      throw new MigrateException(t("Error getting PIDs from Solr, !e", [
-        '!e' => $result->getReasonPhrase()
-      ]));
-    }
+    $result = $this->getDataFetcherPlugin()->getResponseContent($query)->getContents();
     $pids = [];
-    $body = json_decode($result->getBody()->getContents(), TRUE);
+    $body = json_decode($result, TRUE);
     foreach ($body['response']['docs'] as $o) {
       $pids[] = $o['PID'];
     }
