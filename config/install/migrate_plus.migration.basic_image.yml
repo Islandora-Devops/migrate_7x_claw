@@ -5,10 +5,10 @@ migration_group: islandora_7x
 source:
   plugin: islandora
   solr_base_url: http://10.0.2.2:9080/solr
-  fedora_base_url: http://10.0.2.2:9080/fedora
+  fedora_base_url: &fedora_base_url http://10.0.2.2:9080/fedora
 
   data_fetcher_plugin: http
-  authentication:
+  authentication: &fedora_auth
     plugin: basic
     username: fedoraAdmin
     password: fedoraAdmin
@@ -30,7 +30,7 @@ source:
     -
       name: lastmodified
       label: 'Last Modified Date'
-      selector: 'foxml:objectProperties/foxml:property[@NAME="info:fedora/fedora-system:def/model#lastModifiedDate"]/@VALUE'
+      selector: 'foxml:objectProperties/foxml:property[@NAME="info:fedora/fedora-system:def/view#lastModifiedDate"]/@VALUE'
     -
       name: label
       label: 'Object label'
@@ -38,11 +38,15 @@ source:
     -
       name: member_of_collection
       label: "Member of Collections"
-      selector: 'foxml:datastream[@ID = "RELS-EXT" and @CONTROL_GROUP = "X" ]/foxml:datastreamVersion[position() = last()]/foxml:xmlContent/rdf:RDF/rdf:Description/fedora:isMemberOfCollection'
+      selector: 'foxml:datastream[@ID = "RELS-EXT" and @CONTROL_GROUP = "X" ]/foxml:datastreamVersion[position() = last()]/foxml:xmlContent/rdf:RDF/rdf:Description/fedora:isMemberOfCollection/@rdf:resource'
     -
       name: member_of
       label: "Member Of"
-      selector: 'foxml:datastream[@ID = "RELS-EXT" and @CONTROL_GROUP = "X" ]/foxml:datastreamVersion[position() = last()]/foxml:xmlContent/rdf:RDF/rdf:Description/fedora:isMemberOf'
+      selector: 'foxml:datastream[@ID = "RELS-EXT" and @CONTROL_GROUP = "X" ]/foxml:datastreamVersion[position() = last()]/foxml:xmlContent/rdf:RDF/rdf:Description/fedora:isMemberOf/@rdf:resource'
+    -
+      name: mods_dsid
+      label: "MODS ds"
+      selector: 'foxml:datastream[@ID = "MODS" and @CONTROL_GROUP = "M"]/foxml:datastreamVersion[position() = last()]'
 
   ids:
     PID:
@@ -50,12 +54,13 @@ source:
 
 destination:
   plugin: entity:node
+  bundle: islandora_object
 
 process:
+  title: label
   type:
     plugin: default_value
-    default_value: islandora_image
-  title: label
+    default_value: islandora_object
   created:
     plugin: format_date
     from_format: Y-m-d\TH:i:s.u\Z
@@ -73,11 +78,17 @@ process:
   field_member_of: member_of
   field_member_of_collection: member_of_collection
 
-  field_description: abstract
-  uid: constants/uid_root
+  field_mods_text:
+    plugin: fedora_datastream
+    source: mods_dsid
+    settings:
+      fedora_base_url: *fedora_base_url
+      authentication: *fedora_auth
+
 
 dependencies:
   enforced:
     module:
       - migrate_7x_claw
       - migrate_plus
+      - islandora
