@@ -54,7 +54,7 @@ source:
 
 destination:
   plugin: entity:node
-  bundle: islandora_object
+  default_bundle: islandora_object
 
 process:
   title: label
@@ -75,8 +75,14 @@ process:
     source: lastmodified
     settings:
       validate_format: false
-  field_member_of: member_of
-  field_member_of_collection: member_of_collection
+  field_member_of:
+    plugin: substr
+    source: member_of
+    start: 11
+  field_member_of_collection:
+    plugin: substr
+    source: member_of_collection
+    start: 11
 
   field_mods_text:
     plugin: fedora_datastream

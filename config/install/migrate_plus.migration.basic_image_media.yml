@@ -1,0 +1,71 @@
+id: islandora_basic_image_media
+label: Basic Image Objects OBJ Media
+migration_group: islandora_7x
+
+migration_dependencies:
+  required:
+    - basic_image_files
+    - basic_image
+
+source:
+  plugin: islandora
+  solr_base_url: http://10.0.2.2:9080/solr
+  fedora_base_url: &fedora_base_url http://10.0.2.2:9080/fedora
+
+  data_fetcher_plugin: http
+  authentication: &fedora_auth
+    plugin: basic
+    username: fedoraAdmin
+    password: fedoraAdmin
+
+  content_model_field: RELS_EXT_hasModel_uri_ms
+  content_model: islandora:sp_basic_image
+
+  data_parser_plugin: authenticated_xml
+  item_selector: /foxml:digitalObject
+
+  fields:
+    -
+      name: PID
+      label: 'PID'
+      selector: '@PID'
+
+  ids:
+    PID:
+      type: string
+
+process:
+
+  # Lookup the Tiff we just migrated
+  field_media_file/target_id:
+    plugin: migration_lookup
+    migration: basic_image_files
+    source: PID
+    no_stub: true
+  field_media_file/display:
+    plugin: default_value
+    default_value: 1
+  field_media_file/description:
+    plugin: default_value
+    default_value: ''
+
+  # Lookup the Repository object we just created
+  field_media_of:
+    plugin: migration_lookup
+    migration: basic_image
+    source: PID
+    no_stub: true
+
+  # Set as Preservation Master
+  field_tags:
+    plugin: entity_lookup
+    source: constants/preservation_master
+    value_key: name
+    bundle_key: vid
+    bundle: tags
+    entity_type: taxonomy_term
+    ignore_case: true
+
+destination:
+  plugin: 'entity:media'
+  default_bundle: image

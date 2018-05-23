@@ -1,0 +1,94 @@
+id: islandora_basic_image_files
+label: Basic Image Objects OBJ
+migration_group: islandora_7x
+
+source:
+  plugin: islandora
+  solr_base_url: http://10.0.2.2:9080/solr
+  fedora_base_url: &fedora_base_url http://10.0.2.2:9080/fedora
+  fedora_objects_url: &fedora_objects_url http://10.0.2.2:9080/fedora/objects
+  constants:
+    destination_directory: 'public://masters'
+    extension: 'jpg'
+
+  data_fetcher_plugin: http
+  authentication: &fedora_auth
+    plugin: basic
+    username: fedoraAdmin
+    password: fedoraAdmin
+
+  content_model_field: RELS_EXT_hasModel_uri_ms
+  content_model: islandora:sp_basic_image
+
+  data_parser_plugin: authenticated_xml
+  item_selector: /foxml:digitalObject
+
+  fields:
+      -
+        name: PID
+        label: 'PID'
+        selector: '@PID'
+      -
+        name: mimetype
+        label: "MimeType"
+        selector: 'foxml:datastream[@ID = "OBJ" and @CONTROL_GROUP = "M"]/foxml:datastreamVersion[position() = last()]/@MIMETYPE'
+      -
+        name: filesize
+        label: 'File size'
+        selector: 'foxml:datastream[@ID = "OBJ" and @CONTROL_GROUP = "M"]/foxml:datastreamVersion[position() = last()]/@SIZE'
+
+  ids:
+    PID:
+      type: string
+
+process:
+
+  type:
+    plugin: default_value
+    default_value: image
+
+  digital_id:
+    plugin: str_replace
+    source: PID
+    search: ':'
+    replace: '_'
+
+  pid_wrap:
+    plugin: concat
+    delimiter: /
+    source:
+      - ''
+      - PID
+      - ''
+
+  remote_path:
+    plugin: wrap_with_text
+    source: '@pid_wrap'
+    prefix: *fedora_objects_url
+    suffix: 'datastreams/OBJ/content'
+
+  filename:
+    plugin: concat
+    delimiter: '.'
+    source:
+      - '@digital_id'
+      - constants/extension
+
+  local_path:
+    plugin: concat
+    delimiter: /
+    source:
+      - constants/destination_directory
+      - '@filename'
+
+  uri:
+    plugin: download
+    source:
+      - '@remote_path'
+      - '@local_path'
+    settings:
+      authentication: *fedora_auth
+
+destination:
+  plugin: 'entity:file'
+  default_bundle: image
