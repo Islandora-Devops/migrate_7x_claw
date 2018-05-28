@@ -107,8 +107,17 @@ class Islandora extends SourcePluginExtension {
   public function __construct(array $configuration, $plugin_id, $plugin_definition, MigrationInterface $migration) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $migration);
 
+    if (!isset($configuration['fedora_base_url'])) {
+      throw new MigrateException("Islandora source plugin requires a \"fedora_base_url\" be defined.");
+    }
     $this->fedoraBase = rtrim($configuration['fedora_base_url'], '/');
+    if (!isset($configuration['solr_base_url'])) {
+      throw new MigrateException("Islandora source plugin requires a \"solr_base_url\" be defined.");
+    }
     $this->solrBase = rtrim($configuration['solr_base_url'], '/');
+    if (!isset($configuration['content_model']) || !isset($configuration['content_model_field'])) {
+      throw new MigrateException("Islandora source plugin requires a \"content_model_field\" and \"content_model\" be defined.");
+    }
     $this->contentModel = $configuration['content_model'];
     $this->contentModelField = $configuration['content_model_field'];
     if (isset($configuration['batch_size'])) {

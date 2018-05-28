@@ -3,24 +3,35 @@ label: Basic Image Objects
 migration_group: islandora_7x
 
 source:
+  # Islandora plugin
   plugin: islandora
+  # Base url of your Solr instance
   solr_base_url: http://10.0.2.2:9080/solr
+  # Base url of your Fedora 3 instance
   fedora_base_url: &fedora_base_url http://10.0.2.2:9080/fedora
 
+  # define a http data fetcher to access the remote sites
   data_fetcher_plugin: http
+  # Add authentication information to access Fedora
   authentication: &fedora_auth
     plugin: basic
     username: fedoraAdmin
     password: fedoraAdmin
 
+  # We search Solr for PIDs, this is your Solr field for content models
   content_model_field: RELS_EXT_hasModel_uri_ms
+  # This is the content model to search for (with or without "info:fedora/")
   content_model: islandora:sp_basic_image
 
+  # Fedora requires the authentication you defined above to access the objectXML, so use this plugin instead of xml
   data_parser_plugin: authenticated_xml
+  # This grabs the root of an object as we only get one object for each XML.
   item_selector: /foxml:digitalObject
 
   constants:
+    # UID of the author.
     creator_uid: 1
+    # Tag for this node.
     image: 'Image'
 
   fields:
@@ -62,14 +73,18 @@ destination:
   default_bundle: islandora_object
 
 process:
+  # Set node title.
   title: label
 
+  # Set node bundle
   type:
     plugin: default_value
     default_value: islandora_object
 
+  # Set author
   uid: constants/creator_uid
 
+  # Set created datetime
   created:
     plugin: format_date
     from_format: Y-m-d\TH:i:s.u\Z
@@ -78,7 +93,7 @@ process:
     settings:
       validate_format: false # don't validate as the incoming date has 3 digit MS and the generated has 5.
 
-
+  # Set updated datetime
   updated:
     plugin: format_date
     from_format: Y-m-d\TH:i:s.u\Z
@@ -87,26 +102,31 @@ process:
     settings:
       validate_format: false # don't validate as the incoming date has 3 digit MS and the generated has 5.
 
+  # Set member of (THIS FIELD DOES NOT EXIST IN A DEFAULT ISLANDORA_OBJECT)
   field_member_of:
     -
       plugin: skip_on_empty
       method: process
       source: member_of
+    # We only want the PID so strip off the "info:fedora/" from the beginning.
     -
       plugin: substr
       source: member_of
       start: 11
 
+  # Set member of collection.
   field_member_of_collection:
     -
       plugin: skip_on_empty
       method: process
       source: member_of_collection
+    # We only want the PID so strip off the "info:fedora/" from the beginning.
     -
       plugin: substr
       source: member_of_collection
       start: 11
 
+  # Set mods text (THIS FIELD DOES NOT EXIST IN A DEFAULT ISLANDORA_OBJECT).
   field_mods_text:
     -
       plugin: skip_on_empty
@@ -119,6 +139,7 @@ process:
         fedora_base_url: *fedora_base_url
         authentication: *fedora_auth
 
+  # Give this the Image tag.
   field_tags:
     plugin: entity_lookup
     source: constants/image
@@ -128,6 +149,7 @@ process:
     entity_type: taxonomy_term
     ignore_case: true
 
+# Enforced dependencies means this migration is removed if any of these modules are uninstalled.
 dependencies:
   enforced:
     module:

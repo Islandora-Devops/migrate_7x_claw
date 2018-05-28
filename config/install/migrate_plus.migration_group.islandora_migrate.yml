@@ -6,3 +6,5 @@ dependencies:
   enforced:
     module:
       - migrate_7x_claw
+      - migrate_plus
+      - islandora

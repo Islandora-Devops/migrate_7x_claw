@@ -3,9 +3,31 @@ label: Basic Image Objects OBJ
 migration_group: islandora_7x
 
 source:
+  # Islandora plugin
   plugin: islandora
+  # Base url of your Solr instance
   solr_base_url: http://10.0.2.2:9080/solr
+  # Base url of your Fedora 3 instance
   fedora_base_url: &fedora_base_url http://10.0.2.2:9080/fedora
+
+  # define a http data fetcher to access the remote sites
+  data_fetcher_plugin: http
+  # Add authentication information to access Fedora
+  authentication: &fedora_auth
+    plugin: basic
+    username: fedoraAdmin
+    password: fedoraAdmin
+
+  # We search Solr for PIDs, this is your Solr field for content models
+  content_model_field: RELS_EXT_hasModel_uri_ms
+  # This is the content model to search for (with or without "info:fedora/")
+  content_model: islandora:sp_basic_image
+
+  # Fedora requires the authentication you defined above to access the objectXML, so use this plugin instead of xml
+  data_parser_plugin: authenticated_xml
+  # This grabs the root of an object as we only get one object for each XML.
+  item_selector: /foxml:digitalObject
+
   constants:
     destination_directory: 'public://masters'
     extension: 'jpg'
@@ -13,18 +35,6 @@ source:
     objects_string: 'objects'
     obj_contents_suffix: 'datastreams/OBJ/content'
     creator_uid: 1
-
-  data_fetcher_plugin: http
-  authentication: &fedora_auth
-    plugin: basic
-    username: fedoraAdmin
-    password: fedoraAdmin
-
-  content_model_field: RELS_EXT_hasModel_uri_ms
-  content_model: islandora:sp_basic_image
-
-  data_parser_plugin: authenticated_xml
-  item_selector: /foxml:digitalObject
 
   fields:
       -
@@ -38,16 +48,19 @@ source:
 
 process:
 
+  # Bundle type.
   type:
     plugin: default_value
     default_value: image
 
+  # Turns 'islandora:5' into 'islandora_5'
   digital_id:
     plugin: str_replace
     source: PID
     search: ':'
     replace: '_'
 
+  # Turns 'islandora:5' into 'http://10.0.2.2:9080/fedora/object/islandora:5/OBJ/contents'
   remote_path:
     plugin: concat
     delimiter: /
@@ -57,6 +70,7 @@ process:
       - PID
       - constants/obj_contents_suffix
 
+  # Turns 'islandora_5' into 'islandora_5.jpg'
   filename:
     plugin: concat
     delimiter: '.'
@@ -64,6 +78,7 @@ process:
       - '@digital_id'
       - constants/extension
 
+  # Turns 'islandora_5.jpg' into 'public://masters/islandora_5.jpg'
   local_path:
     plugin: concat
     delimiter: /
@@ -71,6 +86,7 @@ process:
       - constants/destination_directory
       - '@filename'
 
+  # Downloads from remote_path: (above) and saves to local_path: (above)
   uri:
     plugin: download
     source:
@@ -79,8 +95,17 @@ process:
     settings:
       authentication: *fedora_auth
 
+  # UID of file owner
   uid: constants/creator_uid
 
 destination:
   plugin: 'entity:file'
   default_bundle: image
+
+# Enforced dependencies means this migration is removed if any of these modules are uninstalled.
+dependencies:
+  enforced:
+    module:
+      - migrate_7x_claw
+      - migrate_plus
+      - islandora
