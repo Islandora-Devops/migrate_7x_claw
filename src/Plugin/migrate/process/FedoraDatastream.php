@@ -120,6 +120,17 @@ class FedoraDatastream extends ProcessPluginBase implements ContainerFactoryPlug
     return "";
   }
 
+  /**
+   * Get the datastream from Fedora 3.
+   *
+   * @param string $pid
+   *    The PID of the remote object.
+   * @param string $dsid
+   *    The datastream ID of the remote datastream.
+   *
+   * @return string
+   *    The contents of the datastream.
+   */
   private function getDatastream($pid, $dsid) {
     $uri = $this->fedoraUri . '/objects/' . $pid . '/datastreams/' . $dsid . '/content';
     $response = $this->httpClient->get($uri, ['auth' => $this->auth ]);

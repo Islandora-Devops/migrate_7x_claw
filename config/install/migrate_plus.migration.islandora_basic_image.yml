@@ -18,6 +18,11 @@ source:
 
   data_parser_plugin: authenticated_xml
   item_selector: /foxml:digitalObject
+
+  constants:
+    creator_uid: 1
+    image: 'Image'
+
   fields:
     -
       name: PID
@@ -58,39 +63,70 @@ destination:
 
 process:
   title: label
+
   type:
     plugin: default_value
     default_value: islandora_object
+
+  uid: constants/creator_uid
+
   created:
     plugin: format_date
     from_format: Y-m-d\TH:i:s.u\Z
     to_format: U
     source: created
     settings:
-      validate_format: false
+      validate_format: false # don't validate as the incoming date has 3 digit MS and the generated has 5.
+
+
   updated:
     plugin: format_date
     from_format: Y-m-d\TH:i:s.u\Z
     to_format: U
     source: lastmodified
     settings:
-      validate_format: false
+      validate_format: false # don't validate as the incoming date has 3 digit MS and the generated has 5.
+
   field_member_of:
-    plugin: substr
-    source: member_of
-    start: 11
+    -
+      plugin: skip_on_empty
+      method: process
+      source: member_of
+    -
+      plugin: substr
+      source: member_of
+      start: 11
+
   field_member_of_collection:
-    plugin: substr
-    source: member_of_collection
-    start: 11
+    -
+      plugin: skip_on_empty
+      method: process
+      source: member_of_collection
+    -
+      plugin: substr
+      source: member_of_collection
+      start: 11
 
   field_mods_text:
-    plugin: fedora_datastream
-    source: mods_dsid
-    settings:
-      fedora_base_url: *fedora_base_url
-      authentication: *fedora_auth
+    -
+      plugin: skip_on_empty
+      method: process
+      source: mods_dsid
+    -
+      plugin: fedora_datastream
+      source: mods_dsid
+      settings:
+        fedora_base_url: *fedora_base_url
+        authentication: *fedora_auth
 
+  field_tags:
+    plugin: entity_lookup
+    source: constants/image
+    value_key: name
+    bundle_key: vid
+    bundle: tags
+    entity_type: taxonomy_term
+    ignore_case: true
 
 dependencies:
   enforced:

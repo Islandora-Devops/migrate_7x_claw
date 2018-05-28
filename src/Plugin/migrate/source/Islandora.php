@@ -101,6 +101,9 @@ class Islandora extends SourcePluginExtension {
    */
   protected $dataFetcherPlugin;
 
+  /**
+   * {@inheritdoc}
+   */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, MigrationInterface $migration) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $migration);
 
@@ -119,6 +122,9 @@ class Islandora extends SourcePluginExtension {
     $this->httpClient = \Drupal::httpClient();
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function initializeIterator() {
     if (is_null($this->batchCounter)) {
       $this->batchCounter = 0;
@@ -203,6 +209,15 @@ class Islandora extends SourcePluginExtension {
     return $this->getQuery(0,0);
   }
 
+  /**
+   * Get a batch of PIDS.
+   *
+   * @param int $start
+   *   The offset of the batch.
+   *
+   * @return array
+   *   Array of the pids.
+   */
   private function getPids($start=0) {
     $query = $this->getQuery($start, $this->batchSize);
     $result = $this->getDataFetcherPlugin()->getResponseContent($query)->getContents();

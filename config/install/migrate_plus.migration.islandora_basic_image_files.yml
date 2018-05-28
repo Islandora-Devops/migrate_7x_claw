@@ -6,10 +6,13 @@ source:
   plugin: islandora
   solr_base_url: http://10.0.2.2:9080/solr
   fedora_base_url: &fedora_base_url http://10.0.2.2:9080/fedora
-  fedora_objects_url: &fedora_objects_url http://10.0.2.2:9080/fedora/objects
   constants:
     destination_directory: 'public://masters'
     extension: 'jpg'
+    fedora_base_url: *fedora_base_url
+    objects_string: 'objects'
+    obj_contents_suffix: 'datastreams/OBJ/content'
+    creator_uid: 1
 
   data_fetcher_plugin: http
   authentication: &fedora_auth
@@ -28,14 +31,6 @@ source:
         name: PID
         label: 'PID'
         selector: '@PID'
-      -
-        name: mimetype
-        label: "MimeType"
-        selector: 'foxml:datastream[@ID = "OBJ" and @CONTROL_GROUP = "M"]/foxml:datastreamVersion[position() = last()]/@MIMETYPE'
-      -
-        name: filesize
-        label: 'File size'
-        selector: 'foxml:datastream[@ID = "OBJ" and @CONTROL_GROUP = "M"]/foxml:datastreamVersion[position() = last()]/@SIZE'
 
   ids:
     PID:
@@ -53,19 +48,14 @@ process:
     search: ':'
     replace: '_'
 
-  pid_wrap:
+  remote_path:
     plugin: concat
     delimiter: /
     source:
-      - ''
+      - constants/fedora_base_url
+      - constants/objects_string
       - PID
-      - ''
-
-  remote_path:
-    plugin: wrap_with_text
-    source: '@pid_wrap'
-    prefix: *fedora_objects_url
-    suffix: 'datastreams/OBJ/content'
+      - constants/obj_contents_suffix
 
   filename:
     plugin: concat
@@ -88,6 +78,8 @@ process:
       - '@local_path'
     settings:
       authentication: *fedora_auth
+
+  uid: constants/creator_uid
 
 destination:
   plugin: 'entity:file'
