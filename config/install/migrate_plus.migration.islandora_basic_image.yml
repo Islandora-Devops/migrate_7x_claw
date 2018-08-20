@@ -52,13 +52,9 @@ source:
       label: 'Object label'
       selector: 'foxml:objectProperties/foxml:property[@NAME="info:fedora/fedora-system:def/model#label"]/@VALUE'
     -
-      name: member_of_collection
-      label: "Member of Collections"
-      selector: 'foxml:datastream[@ID = "RELS-EXT" and @CONTROL_GROUP = "X" ]/foxml:datastreamVersion[position() = last()]/foxml:xmlContent/rdf:RDF/rdf:Description/fedora:isMemberOfCollection/@rdf:resource'
-    -
       name: member_of
       label: "Member Of"
-      selector: 'foxml:datastream[@ID = "RELS-EXT" and @CONTROL_GROUP = "X" ]/foxml:datastreamVersion[position() = last()]/foxml:xmlContent/rdf:RDF/rdf:Description/fedora:isMemberOf/@rdf:resource'
+      selector: 'foxml:datastream[@ID = "RELS-EXT" and @CONTROL_GROUP = "X" ]/foxml:datastreamVersion[position() = last()]/foxml:xmlContent/rdf:RDF/rdf:Description/fedora:isMemberOf/@rdf:resource|foxml:datastream[@ID = "RELS-EXT" and @CONTROL_GROUP = "X" ]/foxml:datastreamVersion[position() = last()]/foxml:xmlContent/rdf:RDF/rdf:Description/fedora:isMemberOfCollection/@rdf:resource'
     -
       name: mods_dsid
       label: "MODS ds"
@@ -102,7 +98,7 @@ process:
     settings:
       validate_format: false # don't validate as the incoming date has 3 digit MS and the generated has 5.
 
-  # Set member of (THIS FIELD DOES NOT EXIST IN A DEFAULT ISLANDORA_OBJECT)
+  # Set member of.
   field_member_of:
     -
       plugin: skip_on_empty
@@ -112,18 +108,6 @@ process:
     -
       plugin: substr
       source: member_of
-      start: 11
-
-  # Set member of collection.
-  field_member_of_collection:
-    -
-      plugin: skip_on_empty
-      method: process
-      source: member_of_collection
-    # We only want the PID so strip off the "info:fedora/" from the beginning.
-    -
-      plugin: substr
-      source: member_of_collection
       start: 11
 
   # Set mods text (THIS FIELD DOES NOT EXIST IN A DEFAULT ISLANDORA_OBJECT).
