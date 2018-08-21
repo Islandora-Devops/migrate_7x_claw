@@ -59,4 +59,17 @@ class AuthenticatedXml extends Xml {
 
   }
 
+  /**
+   * {@inheritdoc}
+   *
+   * Islandora Source can provide 0 urls, we need to exit or it throws an
+   * error.
+   */
+  protected function nextSource() {
+    if (count($this->urls) == 0) {
+      return FALSE;
+    }
+    return parent::nextSource();
+  }
+
 }
