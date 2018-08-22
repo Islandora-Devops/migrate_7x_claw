@@ -29,7 +29,7 @@ source:
   item_selector: /foxml:digitalObject
 
   constants:
-    destination_directory: 'public://masters'
+    destination_directory: 'fedora://masters'
     extension: 'jpg'
     fedora_base_url: *fedora_base_url
     objects_string: 'objects'
