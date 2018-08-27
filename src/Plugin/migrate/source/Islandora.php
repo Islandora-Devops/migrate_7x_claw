@@ -160,8 +160,8 @@ class Islandora extends SourcePluginExtension {
       $this->processing = $configuration['islandora_type'];
     }
 
-    if (isset($configuration['datastream_solr_field'])) {
-      if ($this->processing != self::DATASTREAM_TYPE) {
+    if ($this->processing == self::DATASTREAM_TYPE) {
+      if (!isset($configuration['datastream_solr_field'])) {
         throw new MigrateException("You must provide a Solr field with the list of datastreams as 'datastream_solr_field'.");
       }
       $this->datastreamSolrField = $configuration['datastream_solr_field'];
