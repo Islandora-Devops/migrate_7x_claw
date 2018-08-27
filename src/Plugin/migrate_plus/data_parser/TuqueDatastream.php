@@ -23,9 +23,10 @@ use Islandora\Tuque\Repository\FedoraRepository;
  *
  * This will auto-populate the following fields
  *  PID -> PID of the fedora object
- *  PID_DSID -> a concatenated ID for use in media <-> file matching if DSID is found.
+ *  PID_DSID -> a concatenated ID for use in media <-> file matching.
  *
- * It also will populate with the datastream ID any field with a selector of DSID.
+ * It also will populate with the datastream ID any field with a selector of
+ * DSID.
  */
 class TuqueDatastream extends DataParserPluginBase {
 
@@ -37,7 +38,7 @@ class TuqueDatastream extends DataParserPluginBase {
   private static $repository;
 
   /**
-   * The FedoraApi
+   * The FedoraApi.
    *
    * @var \Islandora\Tuque\API\FedoraApi
    */
@@ -114,33 +115,36 @@ class TuqueDatastream extends DataParserPluginBase {
   /**
    * Initialize a connection to Fedora.
    *
-   * @param $baseUrl
+   * @param string $baseUrl
    *   The base url of the Fedora instance.
-   * @param $username
+   * @param string $username
    *   The username to connect with.
-   * @param $password
+   * @param string $password
    *   The password for the above username.
    */
   private static function initializeConnection($baseUrl, $username, $password) {
-      if (!isset(TuqueDatastream::$api) || is_null(TuqueDatastream::$api)) {
-        TuqueDatastream::initializeApi($baseUrl, $username, $password);
-      }
-      $cache = new SimpleCache();
-      TuqueDatastream::$repository = new FedoraRepository(TuqueDatastream::$api, $cache);
+    if (!isset(TuqueDatastream::$api) || is_null(TuqueDatastream::$api)) {
+      TuqueDatastream::initializeApi($baseUrl, $username, $password);
+    }
+    $cache = new SimpleCache();
+    TuqueDatastream::$repository = new FedoraRepository(TuqueDatastream::$api, $cache);
   }
 
   /**
    * Initialize a Fedora API client.
    *
-   * @param $baseUrl
+   * @param string $baseUrl
    *   The base url of the Fedora instance.
-   * @param $username
+   * @param string $username
    *   The username to connect with.
-   * @param $password
+   * @param string $password
    *   The password for the above username.
    */
   private static function initializeApi($baseUrl, $username, $password) {
-    $guzzle = new Client(['base_uri' => $baseUrl,'auth' => [$username, $password]]);
+    $guzzle = new Client([
+      'base_uri' => $baseUrl,
+      'auth' => [$username, $password],
+    ]);
     TuqueDatastream::$api = new FedoraApi($guzzle, new FedoraApiSerializer());
   }
 
@@ -150,7 +154,7 @@ class TuqueDatastream extends DataParserPluginBase {
   protected function openSourceUrl($url) {
     $this->datastreams = [];
     $this->PID = NULL;
-    // We expect PIDs or Fedora object URLs
+    // We expect PIDs or Fedora object URLs.
     if (!preg_match('~^(?>' . preg_quote($this->baseUrl) . 'objects/)([^:/]+:[^:/]+)~', $url, $match)) {
       return FALSE;
     }
@@ -207,6 +211,7 @@ class TuqueDatastream extends DataParserPluginBase {
    * but I am dynamically generating them based on the batch.
    *
    * @param array|string $urls
+   *   New array of URLs to add to the FedoraDatastream processor.
    */
   public function updateUrls($urls) {
     if (!is_array($urls)) {
@@ -227,4 +232,5 @@ class TuqueDatastream extends DataParserPluginBase {
     }
     return parent::nextSource();
   }
+
 }

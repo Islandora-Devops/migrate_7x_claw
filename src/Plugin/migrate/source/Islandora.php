@@ -2,7 +2,6 @@
 
 namespace Drupal\migrate_7x_claw\Plugin\migrate\source;
 
-use Drupal\migrate\Annotation\MigrateSource;
 use Drupal\migrate\MigrateException;
 use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\migrate_plus\Plugin\migrate\source\SourcePluginExtension;
@@ -48,28 +47,28 @@ class Islandora extends SourcePluginExtension {
   /**
    * The number of batches to run for this source.
    *
-   * @var integer
+   * @var int
    */
   private $batches = 0;
 
   /**
    * The size of the batch to run. This always runs in batches.
    *
-   * @var integer
+   * @var int
    */
   private $batchSize = 10;
 
   /**
    * Count of the current batch.
    *
-   * @var integer
+   * @var int
    */
   private $batchCounter;
 
   /**
    * The count for the current query.
    *
-   * @var integer|NULL
+   * @var int|null
    */
   private $count;
 
@@ -118,7 +117,7 @@ class Islandora extends SourcePluginExtension {
    *
    * @var array
    */
-  private static $valid_processing = [
+  private static $validProcessing = [
     self::OBJECT_TYPE,
     self::DATASTREAM_TYPE,
   ];
@@ -152,9 +151,9 @@ class Islandora extends SourcePluginExtension {
     }
     $this->processing = self::OBJECT_TYPE;
     if (isset($configuration['islandora_type'])) {
-      if (count(array_intersect([$configuration['islandora_type']], Islandora::$valid_processing)) == 0) {
+      if (count(array_intersect([$configuration['islandora_type']], Islandora::$validProcessing)) == 0) {
         throw new MigrateException(t('"islandora_type" must be one of @types', [
-          '@types' => implode(', ', Islandora::$valid_processing)
+          '@types' => implode(', ', Islandora::$validProcessing),
         ]));
       }
       $this->processing = $configuration['islandora_type'];
@@ -178,7 +177,7 @@ class Islandora extends SourcePluginExtension {
     }
     $start = $this->batchCounter * $this->batchSize;
     $pids = $this->getPids($start);
-    $current_batch = array_map(function($i) {
+    $current_batch = array_map(function ($i) {
       return "{$this->fedoraBase}/objects/{$i}/objectXML";
     }, $pids);
     $this->configuration['urls'] = $current_batch;
@@ -186,16 +185,14 @@ class Islandora extends SourcePluginExtension {
     return $this->getDataParserPlugin();
   }
 
-
-
   /**
    * {@inheritdoc}
    */
   protected function doCount() {
     if (is_null($this->count)) {
       if ($this->processing == self::DATASTREAM_TYPE) {
-        # Doing datastreams, so we need to count per object.
-        $query = $this->getQuery(0,0);
+        // Doing datastreams, so we need to count per object.
+        $query = $this->getQuery(0, 0);
         $result = $this->getDataFetcherPlugin()->getResponseContent($query)->getContents();
         $body = json_decode($result, TRUE);
         $count = intval($body['response']['numFound']);
@@ -203,21 +200,21 @@ class Islandora extends SourcePluginExtension {
         $loops = intdiv($count, $batch_size) + ($count % $batch_size ? 1 : 0);
         $count = 0;
         for ($x = 0; $x < $loops; $x += 1) {
-          # Now that we know how many objects, loop and count datastreams.
+          // Now that we know how many objects, loop and count datastreams.
           $start = ($batch_size * $x);
-          $query = $this->getQuery($start,$batch_size);
+          $query = $this->getQuery($start, $batch_size);
           $result = $this->getDataFetcherPlugin()->getResponseContent($query)->getContents();
           $body = json_decode($result, TRUE);
           foreach ($body['response']['docs'] as $object) {
-            # Don't include AUDIT as you don't see if via Tuque/Fedora API-A
+            // Don't include AUDIT as you don't see if via Tuque/Fedora API-A.
             $count += count(array_diff($object[$this->datastreamSolrField], ['AUDIT']));
           }
         }
         $this->count = $count;
       }
       else {
-        # Just do a regular object count.
-        $query = $this->getQuery(0,0);
+        // Just do a regular object count.
+        $query = $this->getQuery(0, 0);
         $result = $this->getDataFetcherPlugin()->getResponseContent($query)->getContents();
         $body = json_decode($result, TRUE);
         $this->count = $body['response']['numFound'];
@@ -278,7 +275,7 @@ class Islandora extends SourcePluginExtension {
    * {@inheritdoc}
    */
   public function __toString() {
-    return $this->getQuery(0,0);
+    return $this->getQuery(0, 0);
   }
 
   /**
@@ -290,7 +287,7 @@ class Islandora extends SourcePluginExtension {
    * @return array
    *   Array of the pids.
    */
-  private function getPids($start=0) {
+  private function getPids($start = 0) {
     $query = $this->getQuery($start, $this->batchSize);
     $result = $this->getDataFetcherPlugin()->getResponseContent($query)->getContents();
     $pids = [];
@@ -312,7 +309,7 @@ class Islandora extends SourcePluginExtension {
    * @return string
    *   The Full query URL.
    */
-  private function getQuery($start=0, $rows=200) {
+  private function getQuery($start = 0, $rows = 200) {
     $params = [];
     $params['rows'] = $rows;
     $params['start'] = $start;
@@ -327,4 +324,5 @@ class Islandora extends SourcePluginExtension {
     $params['sort'] = 'PID+asc';
     return $this->solrBase . "/select?" . build_query($params, FALSE);
   }
+
 }

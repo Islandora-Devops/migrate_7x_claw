@@ -2,8 +2,6 @@
 
 namespace Drupal\migrate_7x_claw\Plugin\migrate_plus\data_parser;
 
-use Drupal\Core\Annotation\Translation;
-use Drupal\migrate_plus\Annotation\DataParser;
 use Drupal\migrate_plus\Plugin\migrate_plus\data_parser\Xml;
 
 /**
@@ -23,6 +21,7 @@ class AuthenticatedXml extends Xml {
    * but I am dynamically generating them based on the batch.
    *
    * @param array|string $urls
+   *   New array of URLs to add to the FedoraDatastream processor.
    */
   public function updateUrls($urls) {
     if (!is_array($urls)) {
