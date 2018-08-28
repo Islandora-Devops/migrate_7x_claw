@@ -1,0 +1,14 @@
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - migrate_7x_claw
+      - migrate_plus
+      - islandora
+id: islandora_7x
+label: 'Islandora Objects'
+description: 'Migration configuration for migrating Islandora 7.x objects'
+source_type: Islandora_7x
+module: null
+shared_configuration: null
