@@ -2,9 +2,7 @@
 
 namespace Drupal\migrate_7x_claw\Plugin\migrate\process;
 
-
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\migrate\Annotation\MigrateProcessPlugin;
 use Drupal\migrate\MigrateException;
 use Drupal\migrate\MigrateExecutableInterface;
 use Drupal\migrate\ProcessPluginBase;
@@ -13,7 +11,7 @@ use GuzzleHttp\Client;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class FedoraDatastream
+ * Class FedoraDatastream.
  *
  * @MigrateProcessPlugin(
  *   id = "fedora_datastream"
@@ -30,13 +28,14 @@ class FedoraDatastream extends ProcessPluginBase implements ContainerFactoryPlug
   protected $httpClient;
 
   /**
-   * Http client authentication
+   * Http client authentication.
+   *
    * @var array
    */
   protected $auth = [];
 
   /**
-   * The URI of your Fedora instance
+   * The URI of your Fedora instance.
    *
    * @var string
    */
@@ -49,10 +48,13 @@ class FedoraDatastream extends ProcessPluginBase implements ContainerFactoryPlug
    *   The plugin configuration.
    * @param string $plugin_id
    *   The plugin ID.
-   * @param mixed $plugin_definition
+   * @param array $plugin_definition
    *   The plugin definition.
    * @param \GuzzleHttp\Client $http_client
    *   The HTTP client.
+   *
+   * @throws \Drupal\migrate\MigrateException
+   *   On configuration errors.
    */
   public function __construct(array $configuration, $plugin_id, array $plugin_definition, Client $http_client) {
     $configuration += [
@@ -68,10 +70,11 @@ class FedoraDatastream extends ProcessPluginBase implements ContainerFactoryPlug
       $this->auth = [];
       $this->auth[] = $configuration['settings']['authentication']['username'];
       $this->auth[] = $configuration['settings']['authentication']['password'];
-      if (isset($configuration['settings']['authentication']['plugin']))
-      $this->auth[] = (isset($configuration['settings']['authentication']['plugin']) ?
+      if (isset($configuration['settings']['authentication']['plugin'])) {
+        $this->auth[] = (isset($configuration['settings']['authentication']['plugin']) ?
         $configuration['settings']['authentication']['plugin'] :
         $configuration['settings']['authentication']['type']);
+      }
     }
   }
 
@@ -96,7 +99,7 @@ class FedoraDatastream extends ProcessPluginBase implements ContainerFactoryPlug
         if (strtolower($key) == 'size') {
           $size = (int) $attribute;
           if ($size > 0) {
-            $fetch = true;
+            $fetch = TRUE;
             if (isset($dsid)) {
               break;
             }
@@ -104,7 +107,7 @@ class FedoraDatastream extends ProcessPluginBase implements ContainerFactoryPlug
         }
         elseif (strtolower($key) == 'id') {
           $dsid = (string) $attribute;
-          if (strpos($dsid, '.') !== false) {
+          if (strpos($dsid, '.') !== FALSE) {
             $dsid = substr($dsid, 0, strpos($dsid, '.'));
           }
           if (isset($fetch)) {
@@ -124,16 +127,16 @@ class FedoraDatastream extends ProcessPluginBase implements ContainerFactoryPlug
    * Get the datastream from Fedora 3.
    *
    * @param string $pid
-   *    The PID of the remote object.
+   *   The PID of the remote object.
    * @param string $dsid
-   *    The datastream ID of the remote datastream.
+   *   The datastream ID of the remote datastream.
    *
    * @return string
-   *    The contents of the datastream.
+   *   The contents of the datastream.
    */
   private function getDatastream($pid, $dsid) {
     $uri = $this->fedoraUri . '/objects/' . $pid . '/datastreams/' . $dsid . '/content';
-    $response = $this->httpClient->get($uri, ['auth' => $this->auth ]);
+    $response = $this->httpClient->get($uri, ['auth' => $this->auth]);
     return $response->getBody()->getContents();
   }
 

@@ -2,14 +2,13 @@
 
 namespace Drupal\migrate_7x_claw\Plugin\migrate\source;
 
-use Drupal\migrate\Annotation\MigrateSource;
 use Drupal\migrate\MigrateException;
 use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\migrate_plus\Plugin\migrate\source\SourcePluginExtension;
 use function GuzzleHttp\Psr7\build_query;
 
 /**
- * Source plugin for beer content.
+ * Source plugin for Islandora content.
  *
  * @MigrateSource(
  *   id = "islandora"
@@ -48,35 +47,28 @@ class Islandora extends SourcePluginExtension {
   /**
    * The number of batches to run for this source.
    *
-   * @var integer
+   * @var int
    */
   private $batches = 0;
 
   /**
    * The size of the batch to run. This always runs in batches.
    *
-   * @var integer
+   * @var int
    */
   private $batchSize = 10;
 
   /**
    * Count of the current batch.
    *
-   * @var integer
+   * @var int
    */
   private $batchCounter;
 
   /**
-   * The current array of Fedora URIs.
-   *
-   * @var array
-   */
-  private $currentBatch;
-
-  /**
    * The count for the current query.
    *
-   * @var integer|NULL
+   * @var int|null
    */
   private $count;
 
@@ -100,6 +92,35 @@ class Islandora extends SourcePluginExtension {
    * @var \Drupal\migrate_plus\DataFetcherPluginInterface
    */
   protected $dataFetcherPlugin;
+
+  /**
+   * What are we processing?
+   *
+   * There is extra processing for datastreams to get the correct count.
+   *
+   * @var string
+   */
+  private $processing;
+
+  /**
+   * Constant for the configuration to count objects.
+   */
+  const OBJECT_TYPE = 'objects';
+
+  /**
+   * Constant for the configuration to count datastreams.
+   */
+  const DATASTREAM_TYPE = 'datastreams';
+
+  /**
+   * Valid islandora_type values.
+   *
+   * @var array
+   */
+  private static $validProcessing = [
+    self::OBJECT_TYPE,
+    self::DATASTREAM_TYPE,
+  ];
 
   /**
    * {@inheritdoc}
@@ -128,6 +149,22 @@ class Islandora extends SourcePluginExtension {
         throw new MigrateException("batch_size must be greater than zero");
       }
     }
+    $this->processing = self::OBJECT_TYPE;
+    if (isset($configuration['islandora_type'])) {
+      if (count(array_intersect([$configuration['islandora_type']], Islandora::$validProcessing)) == 0) {
+        throw new MigrateException(t('"islandora_type" must be one of @types', [
+          '@types' => implode(', ', Islandora::$validProcessing),
+        ]));
+      }
+      $this->processing = $configuration['islandora_type'];
+    }
+
+    if ($this->processing == self::DATASTREAM_TYPE) {
+      if (!isset($configuration['datastream_solr_field'])) {
+        throw new MigrateException("You must provide a Solr field with the list of datastreams as 'datastream_solr_field'.");
+      }
+      $this->datastreamSolrField = $configuration['datastream_solr_field'];
+    }
     $this->httpClient = \Drupal::httpClient();
   }
 
@@ -140,7 +177,7 @@ class Islandora extends SourcePluginExtension {
     }
     $start = $this->batchCounter * $this->batchSize;
     $pids = $this->getPids($start);
-    $current_batch = array_map(function($i) {
+    $current_batch = array_map(function ($i) {
       return "{$this->fedoraBase}/objects/{$i}/objectXML";
     }, $pids);
     $this->configuration['urls'] = $current_batch;
@@ -148,17 +185,40 @@ class Islandora extends SourcePluginExtension {
     return $this->getDataParserPlugin();
   }
 
-
-
   /**
    * {@inheritdoc}
    */
   protected function doCount() {
     if (is_null($this->count)) {
-      $query = $this->getQuery(0,0);
-      $result = $this->getDataFetcherPlugin()->getResponseContent($query)->getContents();
-      $body = json_decode($result, TRUE);
-      $this->count = $body['response']['numFound'];
+      if ($this->processing == self::DATASTREAM_TYPE) {
+        // Doing datastreams, so we need to count per object.
+        $query = $this->getQuery(0, 0);
+        $result = $this->getDataFetcherPlugin()->getResponseContent($query)->getContents();
+        $body = json_decode($result, TRUE);
+        $count = intval($body['response']['numFound']);
+        $batch_size = 10000;
+        $loops = intdiv($count, $batch_size) + ($count % $batch_size ? 1 : 0);
+        $count = 0;
+        for ($x = 0; $x < $loops; $x += 1) {
+          // Now that we know how many objects, loop and count datastreams.
+          $start = ($batch_size * $x);
+          $query = $this->getQuery($start, $batch_size);
+          $result = $this->getDataFetcherPlugin()->getResponseContent($query)->getContents();
+          $body = json_decode($result, TRUE);
+          foreach ($body['response']['docs'] as $object) {
+            // Don't include AUDIT as you don't see if via Tuque/Fedora API-A.
+            $count += count(array_diff($object[$this->datastreamSolrField], ['AUDIT']));
+          }
+        }
+        $this->count = $count;
+      }
+      else {
+        // Just do a regular object count.
+        $query = $this->getQuery(0, 0);
+        $result = $this->getDataFetcherPlugin()->getResponseContent($query)->getContents();
+        $body = json_decode($result, TRUE);
+        $this->count = $body['response']['numFound'];
+      }
       $this->batches = intdiv($this->count, $this->batchSize) + ($this->count % $this->batchSize ? 1 : 0);
     }
     return $this->count;
@@ -215,7 +275,7 @@ class Islandora extends SourcePluginExtension {
    * {@inheritdoc}
    */
   public function __toString() {
-    return $this->getQuery(0,0);
+    return $this->getQuery(0, 0);
   }
 
   /**
@@ -227,7 +287,7 @@ class Islandora extends SourcePluginExtension {
    * @return array
    *   Array of the pids.
    */
-  private function getPids($start=0) {
+  private function getPids($start = 0) {
     $query = $this->getQuery($start, $this->batchSize);
     $result = $this->getDataFetcherPlugin()->getResponseContent($query)->getContents();
     $pids = [];
@@ -249,14 +309,20 @@ class Islandora extends SourcePluginExtension {
    * @return string
    *   The Full query URL.
    */
-  private function getQuery($start=0, $rows=200) {
+  private function getQuery($start = 0, $rows = 200) {
     $params = [];
     $params['rows'] = $rows;
     $params['start'] = $start;
-    $params['fl'] = 'PID';
+    if (isset($this->datastreamSolrField)) {
+      $params['fl'] = 'PID,' . $this->datastreamSolrField;
+    }
+    else {
+      $params['fl'] = 'PID';
+    }
     $params['wt'] = 'json';
     $params['q'] = "{$this->contentModelField}:(\"{$this->contentModel}\" OR \"info:fedora/{$this->contentModel}\")";
     $params['sort'] = 'PID+asc';
     return $this->solrBase . "/select?" . build_query($params, FALSE);
   }
+
 }

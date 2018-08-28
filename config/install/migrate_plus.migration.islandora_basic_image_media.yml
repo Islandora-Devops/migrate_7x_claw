@@ -13,6 +13,10 @@ source:
   solr_base_url: http://10.0.2.2:9080/solr
   # Base url of your Fedora 3 instance
   fedora_base_url: &fedora_base_url http://10.0.2.2:9080/fedora
+  # One of 'object' or 'datastreams', affects the count.
+  islandora_type: datastreams
+  # Required for islandora_type: datastreams, is the Solr field with the datastreams indexed.
+  datastream_solr_field: fedora_datastreams_ms
 
   # define a http data fetcher to access the remote sites
   data_fetcher_plugin: http
@@ -28,13 +32,14 @@ source:
   content_model: islandora:sp_basic_image
 
   # Fedora requires the authentication you defined above to access the objectXML, so use this plugin instead of xml
-  data_parser_plugin: authenticated_xml
+  data_parser_plugin: tuque_datastreams
   # This grabs the root of an object as we only get one object for each XML.
   item_selector: /foxml:digitalObject
 
   constants:
-    # Tag for this media.
+    # Tag for OBJ.
     preservation_master: 'Preservation Master'
+    other_tag: 'Datastream'
     # UID of the author.
     creator_uid: 1
 
@@ -42,21 +47,36 @@ source:
     -
       name: PID
       label: 'PID'
-      selector: '@PID'
+      selector: 'PID'
+    -
+      name: DSID
+      label: 'Datastream ID'
+      selector: 'DSID'
     -
       name: mimetype
-      label: "MimeType"
-      selector: 'foxml:datastream[@ID = "OBJ" and @CONTROL_GROUP = "M"]/foxml:datastreamVersion[position() = last()]/@MIMETYPE'
+      label: 'Mimetype'
+      selector: 'mimetype'
     -
-      name: filesize
-      label: 'File size'
-      selector: 'foxml:datastream[@ID = "OBJ" and @CONTROL_GROUP = "M"]/foxml:datastreamVersion[position() = last()]/@SIZE'
+      name: size
+      label: 'Datastream size'
+      selector: 'size'
+    -
+      name: format
+      label: 'Format'
+      selector: 'format'
+    -
+      name: checksum
+      label: 'Checksum'
+      selector: 'checksum'
 
   ids:
-    PID:
+    PID_DSID:
       type: string
 
 process:
+
+  # Set author.
+  uid: constants/creator_uid
 
   # Add mimetype if available.
   field_mime_type:
@@ -74,16 +94,31 @@ process:
   field_media_image/target_id:
     plugin: migration_lookup
     migration: islandora_basic_image_files
-    source: PID
+    source: PID_DSID
     no_stub: true
+  # If its a file we need to link this field.
+  field_media_file/target_id:
+    plugin: migration_lookup
+    migration: islandora_basic_image_files
+    source: PID_DSID
+    no_stub: true
+
   # Set the display profile.
   field_media_image/display:
     plugin: default_value
     default_value: 1
+  field_media_file/display:
+    plugin: default_value
+    default_value: 1
+
   # Set the description.
   field_media_image/description:
     plugin: default_value
     default_value: ''
+  field_media_file/description:
+    plugin: default_value
+    default_value: ''
+
 
   # Lookup the Repository object we just created
   field_media_of:
@@ -92,22 +127,37 @@ process:
     source: PID
     no_stub: true
 
-  # Set as Preservation Master
+  # Tag as Preservation Master or Datastream
   field_tags:
-    plugin: entity_lookup
-    source: constants/preservation_master
-    value_key: name
-    bundle_key: vid
-    bundle: tags
-    entity_type: taxonomy_term
-    ignore_case: true
+    -
+      plugin: static_map
+      source: DSID
+      map:
+        OBJ: 'Preservation Master'
+      default_value: 'Datastream'
+    -
+      plugin: entity_lookup
+      value_key: name
+      bundle_key: vid
+      bundle: tags
+      entity_type: taxonomy_term
+      ignore_case: true
 
-  # Set author.
-  uid: constants/creator_uid
+  bundle:
+    plugin: static_map
+    source: mimetype
+    map:
+      image/jpeg: 'image'
+      image/tiff: 'image'
+      image/tif: 'image'
+      image/jpg: 'image'
+      image/png: 'image'
+      image/gif: 'image'
+    default_value: 'file'
 
 destination:
   plugin: 'entity:media'
-  default_bundle: image
+
 
 # Enforced dependencies means this migration is removed if any of these modules are uninstalled.
 dependencies:

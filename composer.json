@@ -1,0 +1,46 @@
+{
+  "name": "islandora/migrate_7x_claw",
+  "description": "Tools to assist in Islandora 7.x to CLAW migrations.",
+  "type": "drupal-module",
+  "homepage": "https://github.com/Islandora-Devops/migrate_7x_claw",
+  "support": {
+    "issues": "https://github.com/Islandora-CLAW/CLAW/issues",
+    "irc": "irc://irc.freenode.org/islandora",
+    "source": "https://github.com/Islandora-Devops/migrate_7x_claw"
+  },
+  "license": "GPL-2.0-or-later",
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://packages.drupal.org/8"
+    }
+  ],
+  "require": {
+    "drupal/migrate_plus": "^4",
+    "jonathangreen/tuque": "dev-master"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^6",
+    "squizlabs/php_codesniffer": "2.7.1",
+    "drupal/coder": "*",
+    "sebastian/phpcpd": "*"
+  },
+  "authors": [
+    {
+      "name": "Islandora Foundation",
+      "email": "community@islandora.ca",
+      "role": "Owner"
+    },
+    {
+      "name": "Daniel Lamb",
+      "email": "dlamb@islandora.ca",
+      "role": "Maintainer"
+    },
+    {
+      "name": "Jared Whiklo",
+      "email": "jwhiklo@gmail.com",
+      "role": "Developer"
+    }
+  ],
+  "minimum-stability": "dev"
+}
