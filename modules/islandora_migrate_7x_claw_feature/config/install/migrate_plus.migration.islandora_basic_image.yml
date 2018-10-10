@@ -54,10 +54,6 @@ source:
       name: member_of
       label: 'Member Of'
       selector: 'foxml:datastream[@ID = "RELS-EXT" and @CONTROL_GROUP = "X" ]/foxml:datastreamVersion[position() = last()]/foxml:xmlContent/rdf:RDF/rdf:Description/fedora:isMemberOf/@rdf:resource'
-    -
-      name: mods_dsid
-      label: 'MODS ds'
-      selector: 'foxml:datastream[@ID = "MODS" and @CONTROL_GROUP = "M"]/foxml:datastreamVersion[position() = last()]'
   ids:
     PID:
       type: string
