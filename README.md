@@ -2,32 +2,25 @@
 This module contains plugins and some example migrations to import data from a Fedora 3 Islandora instance
 into an Islandora CLAW instance.
 
-This is a base setup, it requires adjustments to the default Repository Object and configuration changes
-for your setup.
+This is a base setup, it requires configuration changes for your setup.
 
-## Required changes
-The default Repository Object provided with Islandora CLAW requires one additional field to allow for
-these migrations (or you can comment out these field migrations).
+## Installation and configuration
+To use this migration:
 
-1. A large text field called `field_mods_text`, this will store the MODS datastream from the source object.
+1. clone this repo into your Drupal 8 instance `modules/contrib` directory
+1. run `composer install`
+1. edit the .yaml files as indicated below (it is important you edit these files before installing the module)
 
-This is defined in the `config/install/migrate_plus.migration.islandora_basic_image.yml` and
-can be commented out there.
+## Editing the .yaml configuration files
 
-## Example usage
-To use this migration, clone this repo into your Drupal 8 instance `modules/contrib` directory. 
-
-DO NOT INSTALL THE MODULE YET!!!
-
-You will need to edit the 3 `migrate_plus.migration.islandora_basic_image*` files in the `config/install` directory.
+You will need to edit the 3 `migrate_plus.migration.islandora_basic_image*` files in the `migrate_7x_claw/modules/islandora_migrate_7x_claw_feature/config/install` directory.
 
 At a minimum you'll need to set:
 1. `solr_base_url: http://10.0.2.2:9080/solr` to your Solr instance
-1. `fedora_base_url: &fedora_base_url http://10.0.2.2:9080/fedora` to your Fedora, please leave the `&fedora_base_url`
-this is a placeholder and saves re-typing this value in other locations.
+1. `fedora_base_url: &fedora_base_url http://10.0.2.2:9080/fedora` to your Fedora.
 1. The `username` and `password` in the block 
    ```
-    authentication: &fedora_auth
+    authentication:
     plugin: basic
     username: fedoraAdmin
     password: fedoraAdmin
@@ -40,9 +33,9 @@ and the content model to migrate.
 
 These changes need to be made in all 3 migration configuration files.
 
-Now you can install the `migrate_7x_claw` module.
+Now you can install the `migrate_7x_claw` and `islandora_migrate_7x_claw_feature` modules, either using `drush` or via Drupal's "Admin > Extend" user interface.
 
-If you have installed the `migrate_ui` module you can review the process in the `Admin -> Structure -> Migrations`.
+If you have installed the `migrate_ui` module (installed by default on the CLAW Playbook) you can review the process in the `Admin -> Structure -> Migrations`.
 
 You can then see.
 ![List of Migrations](docs/images/migrations.jpg)
@@ -50,6 +43,8 @@ You can then see.
 If you click **List Migrations** you will see 3 migrations.
 
 ![Migration](docs/images/migrate1.jpg)
+
+## Example usage
 
 The _Basic Image Objects OBJ Media_ migration requires the other two be completed first, if you try to run this one it 
 will run the other two first.
@@ -70,12 +65,8 @@ When complete, you should see something like below (your number will be differen
 
 ![Migration result](docs/images/migrate_result1.jpg)
 
-Once you have completed all 3  
-
 ## How this migration works
-To allow for the magic Danny content modelling overhaul.
 
 1. The migration searches Solr for all of the content models specified.
-1. Each is migrated to a new node in Drupal.
-Then it creates a file for the OBJ datastream
-of each of these objects. Lastly it creates a media object that links the file to the node.
+1. Each 7.x object is migrated to a new node in Drupal 8.
+1. Then it creates a file for the OBJ datastream of each of these objects. Lastly it creates a media object that links the file to the node.
