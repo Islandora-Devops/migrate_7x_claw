@@ -7,9 +7,8 @@ This is a base setup, it requires configuration changes for your setup.
 ## Installation and configuration
 To use this migration:
 
-1. clone this repo into your Drupal 8 instance `modules/contrib` directory
-1. run `composer install`
-1. edit the .yaml files as indicated below (it is important you edit these files before installing the module)
+1. from within your Drupal 8 base directory (e.g. `/var/www/html/drupal`), run `composer require islandora/migrate_7x_claw`
+1. edit the .yaml files as indicated in the next section (it is important you edit these files before installing the module)
 
 ## Editing the .yaml configuration files
 
