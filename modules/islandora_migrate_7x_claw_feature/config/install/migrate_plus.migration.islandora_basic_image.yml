@@ -99,20 +99,6 @@ process:
       plugin: substr
       source: member_of_collection
       start: 11
-  field_mods_text:
-    -
-      plugin: skip_on_empty
-      method: process
-      source: mods_dsid
-    -
-      plugin: fedora_datastream
-      source: mods_dsid
-      settings:
-        fedora_base_url: 'http://10.0.2.2:18080/fedora'
-        authentication:
-          plugin: basic
-          username: fedoraAdmin
-          password: fedoraAdmin
   field_tags:
     plugin: entity_lookup
     source: constants/image
