@@ -68,4 +68,5 @@ When complete, you should see something like below (your number will be differen
 
 1. The migration searches Solr for all of the content models specified.
 1. Each 7.x object is migrated to a new node in Drupal 8.
-1. Then it creates a file for the OBJ datastream of each of these objects. Lastly it creates a media object that links the file to the node.
+1. Then it creates a file for the OBJ datastream of each of these objects and a file for each of the object's other datastreams.
+1. Lastly it creates a media object that links the files to the node.
