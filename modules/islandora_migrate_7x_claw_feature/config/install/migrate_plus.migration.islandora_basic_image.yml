@@ -54,10 +54,6 @@ source:
       name: member_of
       label: 'Member Of'
       selector: 'foxml:datastream[@ID = "RELS-EXT" and @CONTROL_GROUP = "X" ]/foxml:datastreamVersion[position() = last()]/foxml:xmlContent/rdf:RDF/rdf:Description/fedora:isMemberOf/@rdf:resource'
-    -
-      name: mods_dsid
-      label: 'MODS ds'
-      selector: 'foxml:datastream[@ID = "MODS" and @CONTROL_GROUP = "M"]/foxml:datastreamVersion[position() = last()]'
   ids:
     PID:
       type: string
@@ -99,20 +95,6 @@ process:
       plugin: substr
       source: member_of_collection
       start: 11
-  field_mods_text:
-    -
-      plugin: skip_on_empty
-      method: process
-      source: mods_dsid
-    -
-      plugin: fedora_datastream
-      source: mods_dsid
-      settings:
-        fedora_base_url: 'http://10.0.2.2:18080/fedora'
-        authentication:
-          plugin: basic
-          username: fedoraAdmin
-          password: fedoraAdmin
   field_tags:
     plugin: entity_lookup
     source: constants/image
