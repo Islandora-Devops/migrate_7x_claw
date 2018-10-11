@@ -8,7 +8,7 @@ This is a base setup, it requires configuration changes for your setup.
 To use this migration:
 
 1. from within your Drupal 8 base directory (e.g. `/var/www/html/drupal`), run `composer require islandora/migrate_7x_claw`
-1. edit the .yaml files as indicated in the next section (it is important you edit these files before installing the module)
+1. edit the .yaml files as indicated in the next section (it is important you edit these files before enabling the module)
 
 ## Editing the .yaml configuration files
 
@@ -32,7 +32,9 @@ and the content model to migrate.
 
 These changes need to be made in all 3 migration configuration files.
 
-Now you can install the `migrate_7x_claw` and `islandora_migrate_7x_claw_feature` modules, either using `drush` or via Drupal's "Admin > Extend" user interface.
+Now you can enable the `migrate_7x_claw` and `islandora_migrate_7x_claw_feature` modules, either using `drush` or via Drupal's "Admin > Extend" user interface.
+
+Note that if you change the .yaml files after enabling the modules, you will need to reimport the configuration by running the following command: `drush -y fim islandora_migrate_7x_claw_feature`.
 
 If you have installed the `migrate_ui` module (installed by default on the CLAW Playbook) you can review the process in the `Admin -> Structure -> Migrations`.
 
