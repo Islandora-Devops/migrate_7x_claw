@@ -103,6 +103,7 @@ process:
       source: DSID
       map:
         OBJ: http://pcdm.org/use#OriginalFile
+        PDFA: http://pcdm.org/use#PreservationMasterFile
         OCR: http://pcdm.org/use#ExtractedText
         TN: http://pcdm.org/use#ThumbnailImage
         MEDIUM_SIZE: http://pcdm.org/use#ServiceFile
