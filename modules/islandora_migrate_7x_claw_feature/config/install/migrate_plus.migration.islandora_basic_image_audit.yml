@@ -24,13 +24,14 @@ source:
     password: fedoraAdmin
   content_model_field: RELS_EXT_hasModel_uri_ms
   content_model: 'islandora:sp_basic_image'
-  data_parser_plugin: audit_datastream
+  data_parser_plugin: authenticated_xml
   item_selector: '/foxml:digitalObject'
   constants:
-    image: Image
     destination_directory: 'fedora://masters'
     extension: xml
     fedora_base_url: 'http://192.168.0.120:8080/fedora'
+    objects_string: objects
+    export_suffix: export
     creator_uid: 1
   fields:
     -
@@ -41,15 +42,14 @@ source:
   ids:
     PID:
       type: string
+
 process:
-  type:
-    plugin: default_value
-    default_value: image
+  plugin: audit_trail
   digital_id:
     plugin: str_replace
-    source: PID_
+    source: PID_AUDIT
     search: ':'
-    replace: _AUDIT
+    replace: _
   remote_path:
     plugin: concat
     delimiter: /
@@ -57,6 +57,7 @@ process:
       - constants/fedora_base_url
       - constants/objects_string
       - PID
+      - constants/export_suffix
   filename:
     plugin: concat
     delimiter: .
@@ -80,6 +81,7 @@ process:
         username: fedoraAdmin
         password: fedoraAdmin
   uid: constants/creator_uid
+
 destination:
   plugin: 'entity:file'
   default_bundle: image
