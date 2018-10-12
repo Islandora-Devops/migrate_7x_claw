@@ -34,7 +34,9 @@ class AuditDatastream extends Xml {
    * {@inheritdoc}
    */
   protected function openSourceUrl($url) {
-    // Probably a hack...
+    // The Islandora source plugin defines the URL as
+    // {$this->fedoraBase}/objects/{$i}/objectXML" but to get the
+    // FOXML we need {$this->fedoraBase}/objects/{$i}/export".
     $url = preg_replace('#objectXML$#', 'export', $url);
 
     $this->reader->close();

@@ -27,8 +27,11 @@ source:
   data_parser_plugin: audit_datastream
   item_selector: '/foxml:digitalObject'
   constants:
-    creator_uid: 1
     image: Image
+    destination_directory: 'fedora://masters'
+    extension: xml
+    fedora_base_url: 'http://192.168.0.120:8080/fedora'
+    creator_uid: 1
   fields:
     -
       name: PID
@@ -44,9 +47,9 @@ process:
     default_value: image
   digital_id:
     plugin: str_replace
-    source: PID_DSID
+    source: PID_
     search: ':'
-    replace: _
+    replace: _AUDIT
   remote_path:
     plugin: concat
     delimiter: /
@@ -54,14 +57,6 @@ process:
       - constants/fedora_base_url
       - constants/objects_string
       - PID
-      - constants/datastreams_string
-      - DSID
-      - constants/content_string
-  extension:
-    plugin: static_map
-    source: mimetype
-    map:
-      text/xml: xml
   filename:
     plugin: concat
     delimiter: .
