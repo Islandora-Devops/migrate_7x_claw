@@ -12,7 +12,7 @@ field_plugin_method: null
 cck_plugin_method: null
 migration_tags: null
 migration_group: islandora_7x
-label: 'Basic Image Objects'
+label: 'Islandora Objects'
 source:
   plugin: islandora
   solr_base_url: 'http://10.0.2.2:18080/solr'
@@ -22,43 +22,80 @@ source:
     plugin: basic
     username: fedoraAdmin
     password: fedoraAdmin
-  content_model_field: RELS_EXT_hasModel_uri_ms
-  content_model: 'islandora:sp_basic_image'
-  data_parser_plugin: authenticated_xml
-  item_selector: '/foxml:digitalObject'
+  data_parser_plugin: json_list 
+  item_selector: '/response/docs'
   constants:
     creator_uid: 1
-    image: Image
   fields:
     -
       name: PID
       label: PID
-      selector: '@PID'
+      selector: 'PID'
+    -
+      name: model
+      label: 'Content Model'
+      selector: 'RELS_EXT_hasModel_uri_s'
     -
       name: created
       label: 'Created Date'
-      selector: 'foxml:objectProperties/foxml:property[@NAME="info:fedora/fedora-system:def/model#createdDate"]/@VALUE'
+      selector: 'fgs_createdDate_dt'
     -
       name: lastmodified
       label: 'Last Modified Date'
-      selector: 'foxml:objectProperties/foxml:property[@NAME="info:fedora/fedora-system:def/view#lastModifiedDate"]/@VALUE'
+      selector: 'fgs_lastModifiedDate_dt'
     -
-      name: label
-      label: 'Object label'
-      selector: 'foxml:objectProperties/foxml:property[@NAME="info:fedora/fedora-system:def/model#label"]/@VALUE'
+      name: title 
+      label: 'Title'
+      selector: 'fgs_label_s'
     -
-      name: member_of_collection
-      label: 'Member of Collections'
-      selector: 'foxml:datastream[@ID = "RELS-EXT" and @CONTROL_GROUP = "X" ]/foxml:datastreamVersion[position() = last()]/foxml:xmlContent/rdf:RDF/rdf:Description/fedora:isMemberOfCollection/@rdf:resource'
+      name: subtitle 
+      label: 'Subtitle'
+      selector: 'mods_titleInfo_subTitle_s'
+    -
+      name: resource_type 
+      label: 'Type of Resource'
+      selector: 'mods_typeOfResource_s'
+    -
+      name: identifier 
+      label: 'Identifier'
+      selector: 'mods_identifier_local_s'
+    -
+      name: description 
+      label: 'Description'
+      selector: 'mods_abstract_s'
+    -
+      name: extent 
+      label: 'Physical Extent'
+      selector: 'mods_physicalDescription_extent_s'
     -
       name: member_of
       label: 'Member Of'
-      selector: 'foxml:datastream[@ID = "RELS-EXT" and @CONTROL_GROUP = "X" ]/foxml:datastreamVersion[position() = last()]/foxml:xmlContent/rdf:RDF/rdf:Description/fedora:isMemberOf/@rdf:resource'
+      selector: 'RELS_EXT_isMemberOfCollection_uri_s'
+    -
+      name: person_agents 
+      label: "Person agents"
+      selector: 'mods_name_personal_namePart_ms'
+    -
+      name: person_roles
+      label: "Person roles"
+      selector: 'mods_name_personal_role_roleTerm_text_ms'
+    -
+      name: corporate_agents 
+      label: "Corporate agents"
+      selector: 'mods_name_corporate_namePart_ms'
+    -
+      name: corporate_roles
+      label: "Corporate roles"
+      selector: 'mods_name_corporate_role_roleTerm_text_ms'
   ids:
     PID:
       type: string
 process:
-  title: label
+  title: title 
+  field_alternative_title: subtitle
+  field_identifier: identifier
+  field_description: description
+  field_extent: extent
   type:
     plugin: default_value
     default_value: islandora_object
@@ -84,25 +121,78 @@ process:
       source: member_of
     -
       plugin: substr
-      source: member_of
-      start: 11
-  field_member_of_collection:
+      start: 12
     -
-      plugin: skip_on_empty
-      method: process
-      source: member_of_collection
+      plugin: migration_lookup
+      migration: islandora_basic_image
+      no_stub: true
+  field_model:
     -
-      plugin: substr
-      source: member_of_collection
-      start: 11
-  field_tags:
-    plugin: entity_lookup
-    source: constants/image
-    value_key: name
-    bundle_key: vid
-    bundle: tags
-    entity_type: taxonomy_term
-    ignore_case: true
+      plugin: static_map
+      source: model 
+      map:
+        info:fedora/islandora:collectionCModel: http://purl.org/dc/dcmitype/Collection
+        info:fedora/islandora:sp_basic_image: http://purl.org/coar/resource_type/c_c513
+        info:fedora/islandora:sp-audioCModel: http://purl.org/coar/resource_type/c_18cc
+        info:fedora/islandora:sp_videoCModel: http://purl.org/coar/resource_type/c_12ce
+      default_value: http://purl.org/coar/resource_type/c_1843
+    -
+      plugin: entity_lookup
+      value_key: field_external_uri 
+      bundle_key: vid
+      bundle: islandora_models
+      entity_type: taxonomy_term
+      ignore_case: true
+  field_resource_type:
+    -
+      plugin: static_map
+      source: resource_type 
+      map:
+        'still image': http://purl.org/dc/dcmitype/StillImage
+        'text': http://purl.org/dc/dcmitype/Text
+        'cartographic': http://purl.org/dc/dcmitype/Image
+        'notated music': http://purl.org/dc/dcmitype/Text
+        'sound recording': http://purl.org/dc/dcmitype/Sound
+        'sound recording-musical': http://purl.org/dc/dcmitype/Sound
+        'sound recording-nonmusical': http://purl.org/dc/dcmitype/Sound
+        'moving image': http://purl.org/dc/dcmitype/MovingImage
+        'three dimensional object': http://purl.org/dc/dcmitype/Image
+        'software, multimedia': http://purl.org/dc/dcmitype/Software
+        # Need to figure out what to do wtih 'mixed material'
+        # There is no obvious mapping at https://www.loc.gov/standards/mods/mods-dcsimple.html
+    -
+      plugin: entity_lookup
+      value_key: field_external_uri 
+      bundle_key: vid
+      bundle: resource_types
+      entity_type: taxonomy_term
+      ignore_case: true
+  person_agents_target_id:
+      plugin: entity_generate
+      source: person_agents 
+      value_key: name
+      bundle_key: vid
+      bundle: person 
+      entity_type: taxonomy_term
+      ignore_case: true
+  corporate_agents_target_id:
+      plugin: entity_generate
+      source: corporate_agents 
+      value_key: name
+      bundle_key: vid
+      bundle: corporate_body 
+      entity_type: taxonomy_term
+      ignore_case: true
+  field_linked_agent:
+    plugin: merge
+    source:
+      - '@person_agents_target_id'
+      - '@corporate_agents_target_id'
+  field_linked_agent/rel_type:
+    plugin: merge
+    source:
+      - person_roles
+      - corporate_roles
 destination:
   plugin: 'entity:node'
   default_bundle: islandora_object
