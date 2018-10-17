@@ -50,39 +50,24 @@ process:
     source: PID_AUDIT
     search: ':'
     replace: _
-  remote_path:
-    plugin: concat
-    delimiter: /
-    source:
-      - constants/fedora_base_url
-      - constants/objects_string
-      - PID
-      - constants/export_suffix
-  filename:
-    plugin: concat
-    delimiter: .
-    source:
-      - '@digital_id'
-      - '@extension'
-  local_path:
-    plugin: concat
-    delimiter: /
-    source:
-      - constants/destination_directory
-      - '@filename'
-  uri:
-    plugin: download
-    source:
-      - '@remote_path'
-      - '@local_path'
-    settings:
-      authentication:
-        plugin: basic
-        username: fedoraAdmin
-        password: fedoraAdmin
-  uid: constants/creator_uid
+  field_media_image/target_id:
+    plugin: migration_lookup
+    migration: islandora_basic_image_audit
+    source: PID
+    no_stub: true
+  field_media_file/target_id:
+    plugin: migration_lookup
+    migration: islandora_basic_image_audit 
+    source: PID
+    no_stub: true
+  field_media_of:
+    plugin: migration_lookup
+    migration: islandora_basic_image
+    source: PID
+no_stub: true
 
 destination:
   plugin: 'entity:file'
+  uri: '/tmp/PID_AUDIT.xml'
   default_bundle: image
 migration_dependencies: null

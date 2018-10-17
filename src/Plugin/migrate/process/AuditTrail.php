@@ -107,7 +107,8 @@ class AuditTrail extends ProcessPluginBase implements ContainerFactoryPluginInte
           $audit_trail_xml = $dom->saveXML($auditTrail);
         }
         // during development
-        error_log($audit_trail_xml, 3, '/tmp/audit.log');
+        error_log($audit_trail_xml, 3, '/tmp/' . $pid . '_AUDIT.xml');
+        // file_put_contents('/tmp/' . $pid . '_AUDIT.xml', $audit_trail_xml);
         return $audit_trail_xml;
       }
       catch (\Exception $e) {
@@ -128,6 +129,7 @@ class AuditTrail extends ProcessPluginBase implements ContainerFactoryPluginInte
    *   The contents of the exported FOXML.
    */
   private function getDatastream($pid) {
+    dd($this->auth);
     $uri = $this->fedoraUri . '/objects/' . $pid . '/export';
     try {
       $response = $this->httpClient->get($uri, ['auth' => $this->auth]);
