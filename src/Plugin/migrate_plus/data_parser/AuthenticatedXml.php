@@ -2,7 +2,7 @@
 
 namespace Drupal\migrate_7x_claw\Plugin\migrate_plus\data_parser;
 
-use Drupal\migrate_plus\Plugin\migrate_plus\data_parser\Xml;
+use Drupal\migrate_plus\Plugin\migrate_plus\data_parser\SimpleXml;
 
 /**
  * Obtain XML data for migration using the XMLReader pull parser.
@@ -12,7 +12,7 @@ use Drupal\migrate_plus\Plugin\migrate_plus\data_parser\Xml;
  *   title = @Translation("Authenticated XML")
  * )
  */
-class AuthenticatedXml extends Xml {
+class AuthenticatedXml extends SimpleXml {
 
   /**
    * Update the configuration for the dataparserplugin.
@@ -34,28 +34,22 @@ class AuthenticatedXml extends Xml {
    * {@inheritdoc}
    */
   protected function openSourceUrl($url) {
-    // (Re)open the provided URL.
-    $this->reader->close();
-
     // Clear XML error buffer. Other Drupal code that executed during the
     // migration may have polluted the error buffer and could create false
     // positives in our error check below. We are only concerned with errors
     // that occur from attempting to load the XML string into an object here.
     libxml_clear_errors();
 
-    if (is_null($url)) {
-      // No URL means no source.
-      return FALSE;
+    $xml_data = $this->getDataFetcherPlugin()->getResponseContent($url)->getContents();
+    $xml = simplexml_load_string($xml_data);
+    $this->registerNamespaces($xml);
+    $xpath = $this->configuration['item_selector'];
+    $this->matches = $xml->xpath($xpath);
+    foreach (libxml_get_errors() as $error) {
+      $error_string = self::parseLibXmlError($error);
+      throw new MigrateException($error_string);
     }
-
-    // Get the XML using the data fetcher to allow us to access URLs requiring
-    // authentication.
-    $xml = $this->getDataFetcherPlugin()
-      ->getResponseContent($url)
-      ->getContents();
-
-    return $this->reader->XML($xml, NULL, \LIBXML_NOWARNING);
-
+    return TRUE;
   }
 
   /**

@@ -6,7 +6,7 @@ dependencies:
       - migrate_7x_claw
       - migrate_plus
       - islandora
-id: islandora_basic_image
+id: islandora_objects
 class: null
 field_plugin_method: null
 cck_plugin_method: null
@@ -16,6 +16,8 @@ label: 'Islandora Objects'
 source:
   plugin: islandora
   solr_base_url: 'http://10.0.2.2:18080/solr'
+  q: 'RELS_EXT_isMemberOfCollection_uri_ms:"info:fedora/islandora:migrate" OR PID:"islandora:migrate"' 
+  row_type: solr
   fedora_base_url: 'http://10.0.2.2:18080/fedora'
   data_fetcher_plugin: http
   authentication:
@@ -87,6 +89,46 @@ source:
       name: corporate_roles
       label: "Corporate roles"
       selector: 'mods_name_corporate_role_roleTerm_text_ms'
+    -
+      name: topic 
+      label: "Topics"
+      selector: 'mods_subject_topic_ms'
+    -
+      name: temporal
+      label: "Temporal"
+      selector: 'mods_subject_temporal_ms'
+    -
+      name: geographic 
+      label: "Geographic"
+      selector: 'mods_subject_geographic_ms'
+    -
+      name: continent 
+      label: "Continent"
+      selector: 'mods_subject_hierarchicalGeographic_continent_ms'
+    -
+      name: country 
+      label: "Country"
+      selector: 'mods_subject_hierarchicalGeographic_country_ms'
+    -
+      name: province 
+      label: "Province"
+      selector: 'mods_subject_hierarchicalGeographic_province_ms'
+    -
+      name: region 
+      label: "Region"
+      selector: 'mods_subject_hierarchicalGeographic_region_ms'
+    -
+      name: county 
+      label: "County"
+      selector: 'mods_subject_hierarchicalGeographic_county_ms'
+    -
+      name: city 
+      label: "City"
+      selector: 'mods_subject_hierarchicalGeographic_city_ms'
+    -
+      name: city_section
+      label: "City Section"
+      selector: 'mods_subject_hierarchicalGeographic_citySection_ms'
   ids:
     PID:
       type: string
@@ -124,12 +166,15 @@ process:
       start: 12
     -
       plugin: migration_lookup
-      migration: islandora_basic_image
+      migration: islandora_objects
       no_stub: true
   field_model:
     -
-      plugin: static_map
+      plugin: skip_on_empty
+      method: process
       source: model 
+    -
+      plugin: static_map
       map:
         info:fedora/islandora:collectionCModel: http://purl.org/dc/dcmitype/Collection
         info:fedora/islandora:sp_basic_image: http://purl.org/coar/resource_type/c_c513
@@ -145,8 +190,11 @@ process:
       ignore_case: true
   field_resource_type:
     -
-      plugin: static_map
+      plugin: skip_on_empty
+      method: process
       source: resource_type 
+    -
+      plugin: static_map
       map:
         'still image': http://purl.org/dc/dcmitype/StillImage
         'text': http://purl.org/dc/dcmitype/Text
@@ -167,32 +215,92 @@ process:
       bundle: resource_types
       entity_type: taxonomy_term
       ignore_case: true
-  person_agents_target_id:
-      plugin: entity_generate
-      source: person_agents 
-      value_key: name
-      bundle_key: vid
-      bundle: person 
-      entity_type: taxonomy_term
-      ignore_case: true
-  corporate_agents_target_id:
-      plugin: entity_generate
-      source: corporate_agents 
-      value_key: name
-      bundle_key: vid
-      bundle: corporate_body 
-      entity_type: taxonomy_term
-      ignore_case: true
+  temp_person:
+    -
+      plugin: migration_lookup 
+      migration: islandora_person
+      source: person_agents
+      no_stub: true
+    -
+      plugin: typed_relation 
+      role_source: person_roles
+  temp_corporate:
+    -
+      plugin: migration_lookup 
+      migration: islandora_corporate
+      source: corporate_agents
+      no_stub: true
+    -
+      plugin: typed_relation 
+      role_source: corporate_roles
   field_linked_agent:
-    plugin: merge
+    plugin: merge_ignore_empty
     source:
-      - '@person_agents_target_id'
-      - '@corporate_agents_target_id'
-  field_linked_agent/rel_type:
-    plugin: merge
+      - '@temp_person'
+      - '@temp_corporate'
+  temp_topic: 
+    plugin: migration_lookup
+    migration: islandora_subject
+    source: topic
+    no_stub: true
+  temp_temporal:
+    plugin: migration_lookup 
+    migration: islandora_subject
+    source: temporal 
+    no_stub: true
+  temp_geographic:
+    plugin: migration_lookup 
+    migration: islandora_geographic
+    source: geographic
+    no_stub: true
+  temp_continent:
+    plugin: migration_lookup 
+    migration: islandora_geographic
+    source: continent
+    no_stub: true
+  temp_country:
+    plugin: migration_lookup 
+    migration: islandora_geographic
+    source: country
+    no_stub: true
+  temp_province:
+    plugin: migration_lookup 
+    migration: islandora_geographic
+    source: province 
+    no_stub: true
+  temp_region:
+    plugin: migration_lookup 
+    migration: islandora_geographic
+    source: region 
+    no_stub: true
+  temp_county:
+    plugin: migration_lookup 
+    migration: islandora_geographic
+    source: county 
+    no_stub: true
+  temp_city:
+    plugin: migration_lookup 
+    migration: islandora_geographic
+    source: city 
+    no_stub: true
+  temp_city_section:
+    plugin: migration_lookup 
+    migration: islandora_geographic
+    source: city_section
+    no_stub: true
+  field_subject:
+    plugin: merge_ignore_empty
     source:
-      - person_roles
-      - corporate_roles
+      - '@temp_topic'
+      - '@temp_temporal'
+      - '@temp_geographic'
+      - '@temp_continent'
+      - '@temp_country'
+      - '@temp_province'
+      - '@temp_region'
+      - '@temp_county'
+      - '@temp_city'
+      - '@temp_city_section'
 destination:
   plugin: 'entity:node'
   default_bundle: islandora_object

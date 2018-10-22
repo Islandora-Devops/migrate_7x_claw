@@ -17,20 +17,6 @@ use function GuzzleHttp\Psr7\build_query;
 class Islandora extends SourcePluginExtension {
 
   /**
-   * The content model to restrict this search to.
-   *
-   * @var string
-   */
-  private $contentModel;
-
-  /**
-   * The Solr field to use for content model matching.
-   *
-   * @var string
-   */
-  private $contentModelField;
-
-  /**
    * The base URL of the Fedora repo.
    *
    * @var string
@@ -50,13 +36,6 @@ class Islandora extends SourcePluginExtension {
    * @var string
    */
   private $q;
-
-  /**
-   * Solr field list string.
-   *
-   * @var string
-   */
-  private $fl;
 
   /**
    * The number of batches to run for this source.
@@ -85,6 +64,11 @@ class Islandora extends SourcePluginExtension {
    * @var int|null
    */
   private $count;
+
+  /**
+   * Type of URL to generate a list of.  E.g. foxml, solr, MODS.
+   */
+  private $row_type;
 
   /**
    * Internal client for Solr queries.
@@ -150,12 +134,6 @@ class Islandora extends SourcePluginExtension {
       throw new MigrateException("Islandora source plugin requires a \"solr_base_url\" be defined.");
     }
     $this->solrBase = rtrim($configuration['solr_base_url'], '/');
-    if (isset($configuration['content_model'])) {
-      $this->contentModel = $configuration['content_model'];
-    }
-    if (!isset($configuration['content_model_field'])) {
-      $this->contentModelField = $configuration['content_model_field'];
-    }
     if (isset($configuration['batch_size'])) {
       if (is_int($this->configuration['batch_size']) && ($this->configuration['batch_size']) > 0) {
         $this->batchSize = $this->configuration['batch_size'];
@@ -187,9 +165,9 @@ class Islandora extends SourcePluginExtension {
       $this->q = $configuration['q'];
     }
 
-    $this->fl = "PID";
-    if (isset($configuration['fl']) && !empty($configuration['fl'])) {
-      $this->fl = $configuration['fl'];
+    $this->row_type = 'foxml';
+    if (isset($configuration['row_type']) && !empty($configuration['row_type'])) {
+      $this->row_type = $configuration['row_type'];
     }
   }
 
@@ -203,10 +181,15 @@ class Islandora extends SourcePluginExtension {
     $start = $this->batchCounter * $this->batchSize;
     $pids = $this->getPids($start);
     $current_batch = array_map(function ($i) {
-      if ($this->configuration['data_parser_plugin'] == 'json_list') {
+      if ($this->row_type == 'solr') {
         return "{$this->solrBase}/select?q=PID%3A\"" . urlencode($i) . "\"&wt=json";
       }
-      return "{$this->fedoraBase}/objects/{$i}/objectXML";
+      else if ($this->row_type != 'foxml') {
+        return "{$this->fedoraBase}/objects/{$i}/datastreams/{$this->row_type}/content";
+      }
+      else {
+        return "{$this->fedoraBase}/objects/{$i}/objectXML";
+      }
     }, $pids);
     $this->configuration['urls'] = $current_batch;
     $this->getDataParserPlugin()->updateUrls($current_batch);
@@ -341,7 +324,7 @@ class Islandora extends SourcePluginExtension {
     $params = [];
     $params['rows'] = $rows;
     $params['start'] = $start;
-    $params['fl'] = $this->fl;
+    $params['fl'] = 'PID';
     $params['q'] = $this->q;
     $params['wt'] = 'json';
     $params['sort'] = 'PID+asc';
