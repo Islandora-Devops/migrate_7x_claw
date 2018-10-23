@@ -42,7 +42,7 @@ class AuditTrail extends ProcessPluginBase implements ContainerFactoryPluginInte
   protected $fedoraUri;
 
   /**
-   * Constructs a download process plugin.
+   * Constructs a process plugin.
    *
    * @param array $configuration
    *   The plugin configuration.
@@ -63,7 +63,7 @@ class AuditTrail extends ProcessPluginBase implements ContainerFactoryPluginInte
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->httpClient = $http_client;
     if (!isset($configuration['settings']['fedora_base_url'])) {
-      throw new MigrateException("The fedora_datastream plugin requires a settings: key with a fedora_base_url key of your Fedora Base URI.");
+      throw new MigrateException("The audit_trail plugin requires a settings: key with a fedora_base_url key of your Fedora Base URI.");
     }
     $this->fedoraUri = $configuration['settings']['fedora_base_url'];
     if (isset($configuration['settings']['authentication'])) {
@@ -76,6 +76,7 @@ class AuditTrail extends ProcessPluginBase implements ContainerFactoryPluginInte
         $configuration['settings']['authentication']['type']);
       }
     }
+    dd($this->auth, "Auth");
   }
 
   /**
@@ -94,7 +95,6 @@ class AuditTrail extends ProcessPluginBase implements ContainerFactoryPluginInte
    * {@inheritdoc}
    */
   public function transform($value, MigrateExecutableInterface $migrate_executable, Row $row, $destination_property) {
-    error_log(var_export($row), 3, '/tmp/audit_trail.log');
     $pid = $row->getSourceIdValues()['PID'];
 
     // Parse the AUDIT datastream out of the retrieved FOXML.
@@ -107,6 +107,7 @@ class AuditTrail extends ProcessPluginBase implements ContainerFactoryPluginInte
           $audit_trail_xml = $dom->saveXML($auditTrail);
         }
         // during development
+        error_log($pid, 3, '/tmp/pids.txt');
         error_log($audit_trail_xml, 3, '/tmp/' . $pid . '_AUDIT.xml');
         // file_put_contents('/tmp/' . $pid . '_AUDIT.xml', $audit_trail_xml);
         return $audit_trail_xml;
@@ -129,7 +130,6 @@ class AuditTrail extends ProcessPluginBase implements ContainerFactoryPluginInte
    *   The contents of the exported FOXML.
    */
   private function getDatastream($pid) {
-    dd($this->auth);
     $uri = $this->fedoraUri . '/objects/' . $pid . '/export';
     try {
       $response = $this->httpClient->get($uri, ['auth' => $this->auth]);

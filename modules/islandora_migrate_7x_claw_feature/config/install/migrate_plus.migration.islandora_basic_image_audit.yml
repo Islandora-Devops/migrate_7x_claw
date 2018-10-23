@@ -50,16 +50,6 @@ process:
     source: PID_AUDIT
     search: ':'
     replace: _
-  field_media_image/target_id:
-    plugin: migration_lookup
-    migration: islandora_basic_image_audit
-    source: PID
-    no_stub: true
-  field_media_file/target_id:
-    plugin: migration_lookup
-    migration: islandora_basic_image_audit 
-    source: PID
-    no_stub: true
   field_media_of:
     plugin: migration_lookup
     migration: islandora_basic_image
