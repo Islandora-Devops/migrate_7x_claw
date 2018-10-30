@@ -327,7 +327,7 @@ class Islandora extends SourcePluginExtension {
     $params['fl'] = 'PID';
     $params['q'] = $this->q;
     $params['wt'] = 'json';
-    $params['sort'] = 'PID+asc';
+    $params['sort'] = 'PID+desc';
     return $this->solrBase . "/select?" . build_query($params, FALSE);
   }
 
