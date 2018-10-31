@@ -64,11 +64,11 @@ drush -y fim islandora_migrate_7x_claw_feature
 
 You can also use the UI to import the feature if you go to `admin/config/development/features` and click on the `Changed` link next to "Migrate 7x Claw Feature".
 
-![Changed Link](docs/images/Feature Click Changed.png)
+![Changed Link](docs/images/feature_click_changed.png)
 
 From there, you can select all changes and clicking "Import Changes"
 
-![Import Changes](docs/images/Feature Import Changes.png)
+![Import Changes](docs/images/feature_import_changes.png)
 
 ## Running the migrations
 
