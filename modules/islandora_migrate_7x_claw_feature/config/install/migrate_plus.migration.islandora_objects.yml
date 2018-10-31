@@ -16,7 +16,7 @@ label: 'Islandora Objects'
 source:
   plugin: islandora
   solr_base_url: 'http://10.0.2.2:18080/solr'
-  q: 'RELS_EXT_isMemberOfCollection_uri_ms:"info:fedora/islandora:migrate" OR PID:"islandora:migrate"' 
+  q: 'RELS_EXT_isMemberOfCollection_uri_ms:"info:fedora/islandora:sp_basic_image_collection" OR PID:"islandora:sp_basic_image_collection"' 
   row_type: solr
   fedora_base_url: 'http://10.0.2.2:18080/fedora'
   data_fetcher_plugin: http
