@@ -16,8 +16,8 @@ Currently, the following content models can be migrated over with full functiona
 - Binary
 
 If you want some sample Basic Image objects with metadata made from stock forms, check out this zip file that you can
-use with islandora_zip_batch_importer. All the images were obtained from pexels and are free to use for personal or
-business purposes, with the original photographers attributed in the MODS. 
+use with islandora_zip_batch_importer. All the images were obtained from [Pexels](https://www.pexels.com/) and are
+free to use for personal or business purposes, with the original photographers attributed in the MODS. 
 
 ## Installation
 
@@ -27,7 +27,7 @@ Download this module, its feature, and its dependencies with composer
 composer require islandora/migrate_7x_claw
 ```
 
-Install the examle migrations and enable the module with drush
+Install the module and example migrations at the same time using drush
 
 ```
 drush en islandora_migrate_7x_claw_feature
@@ -37,7 +37,8 @@ drush en islandora_migrate_7x_claw_feature
 
 By default, the migrations are configured to work with an `islandora_vagrant` instance running on the same host as a
 `claw-playbook` instance, which is convienent for development and testing. But for your Islandora 7.x instance, the
-following config will need to be set the same way on the source plugin of each migration (other than `islandora_7x_tags`):  
+following config will need to be set the same way on the source plugin of each migration (other than
+`islandora_7x_tags`):  
 
 - `solr_base_url` should point to your Islandora 7.x Solr instance (i.e. `http://example.org:8080/solr`)
 - `fedora_base_url` should point to your Fedora 3 instance (i.e. `http://example.org:8080/fedora`)
@@ -47,13 +48,14 @@ following config will need to be set the same way on the source plugin of each m
     username: fedoraAdmin
     password: fedoraAdmin
    ```
-- `q` is used to define a Solr query that selects which objects get migrated.  By default, the 
+- `q` is used to define a Solr query that selects which objects get migrated.  From a fresh clone, the 
 migrations are configured to look for `islandora:sp_basic_image_collection` and all its children with the following query:
   ```
     RELS_EXT_isMemberOfCollection_uri_ms:"info:fedora/islandora:sp_basic_image_collection" OR PID:"islandora:sp_basic_image_collection" 
   ```
-You can easily import a collection of your own by changing the PID in the above query, or you can provide your own query to migrate
-over in other ways.  If you can write a Solr select query for it, you can migrate it into CLAW.
+You can easily import a collection of your own by changing the PID in the above query, or you can provide your own
+query to migrate over objects in other ways (such as per content model, in order by date created, etc...).  If you can write a Solr select query for it, you can migrate it into CLAW.  Omitting `q` from configuration will default to `*:*`
+for the Solr query.  
 
 Once you've updated the configuration, you need to re-import the feature to load your changes.  You can do this with `drush`:
 ```
@@ -61,7 +63,12 @@ drush -y fim islandora_migrate_7x_claw_feature
 ```
 
 You can also use the UI to import the feature if you go to `admin/config/development/features` and click on the `Changed` link next to "Migrate 7x Claw Feature".
+
+![Changed Link](docs/images/Feature Click Changed.png)
+
 From there, you can select all changes and clicking "Import Changes"
+
+![Import Changes](docs/images/Feature Import Changes.png)
 
 ## Running the migrations
 
