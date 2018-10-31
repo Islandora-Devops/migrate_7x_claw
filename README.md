@@ -15,9 +15,10 @@ Currently, the following content models can be migrated over with full functiona
 - PDF
 - Binary
 
-If you want some sample Basic Image objects with metadata made from stock forms, check out this zip file that you can
-use with islandora_zip_batch_importer. All the images were obtained from [Pexels](https://www.pexels.com/) and are
-free to use for personal or business purposes, with the original photographers attributed in the MODS. 
+If you want some sample Basic Image objects with metadata made from stock forms, check out [this zip
+file](docs/examples/sample_objects.zip) that you can use with `islandora_zip_batch_importer`. All the images were
+obtained from [Pexels](https://www.pexels.com/) and are free to use for personal or business purposes, with the
+original photographers attributed in the MODS. 
 
 ## Installation
 
@@ -126,11 +127,9 @@ You can also check out the collection itself, which should have its "Members" bl
 ![Collection in CLAW](docs/images/collection_in_claw.png)
 
 ## How this migration works
-You provide a query, as `q` in the source plugin configuration, that defines which objects get migrated.  The PIDS of those
-objects are used to construct the URLs for either an object's Solr doc, it's FOXML file, or a specific datastream (such as
-MODS).  Migrations choose which url they want via the 'url_type' configuraiton.  Those urls are fetched via http and the
-migrations select what data to extract by either providing Solr field names or XPaths, which are then aligned with fields
-in Drupal 8.
+You provide a query, as `q` in the source plugin configuration, that defines which objects get migrated.  For each
+result in the query, you can choose to use either the Solr doc for an object, the FOXML file for an object, or
+a particular datastream for an object by setting the `url_type` configuration.  The migrations for subjects, geographics, and agents all target the MODS file of an object. The migration for datastreams uses FOXML, and the migration for the objects themselves use the Solr doc.
 
 All datastreams are migrated over as-is, regardless of what data is extracted by the migrations and applied as fields.
 
