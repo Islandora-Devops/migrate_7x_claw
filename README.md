@@ -37,8 +37,8 @@ drush en islandora_migrate_7x_claw_feature
 
 By default, the migrations are configured to work with an `islandora_vagrant` instance running on the same host as a
 `claw-playbook` instance, which is convienent for development and testing. But for your Islandora 7.x instance, the
-following config will need to be set the same way on the source plugin of each migration (other than
-`islandora_7x_tags`):  
+following config will need to be set the same way on the source plugin of each migration (except for the
+"7.x Tags Migration from CSV" migration):  
 
 - `solr_base_url` should point to your Islandora 7.x Solr instance (i.e. `http://example.org:8080/solr`)
 - `fedora_base_url` should point to your Fedora 3 instance (i.e. `http://example.org:8080/fedora`)
@@ -77,14 +77,17 @@ You can quickly run all migrations using `drush`:
 drush -y mim --group islandora_7x
 ```
 
-If you want to go through the UI, you can visit `admin/structure/migrate/manage/islandora_7x/migrations` to see a list of all the migrations.
+If you want to go through the UI, you can visit `admin/structure/migrate` to see a list of migration groups. The migrations provided by this module have the machine name `islandora_7x`.
 
-![List of Migrations](docs/images/migrations.jpg)
+![Migrations Groups](docs/images/migrate_groups.png)
 
-You will see 8 migrations. _The "7.x Tags Migration from CSV" needs to be run first_. Clicking **Execute** on
-"7.x Tags Migration from CSV" migration displays a page like
+You will see 8 migrations. _The "7.x Tags Migration from CSV" needs to be run first_.
 
-![Migration Execute](docs/images/migrate2.jpg)
+![Migrations](docs/images/migrations.png)
+
+Clicking **Execute** on "7.x Tags Migration from CSV" migration displays a page like
+
+![Execute Migration](docs/images/execute_migration.png)
 
 The operations you can run for a migration are 
 * **Import** - import un-migrated objects (check the "Update" checkbox to re-run previously migrated objects)
@@ -94,17 +97,33 @@ The operations you can run for a migration are
 
 If you select "Import", and then click "Execute", it will run the migration. It should process 5 items.
   
-Then you can run the "Islandora Media" migration, which
-depends on the remaining migrations.  Running it effectively runs the rest of the group.  After it's done,
+Then you can run the "Islandora Media" migration, which depends on the remaining migrations.  Running it effectively
+runs the entire group of migrations other than the "7.x Tags Migration from CSV" migration.  After they're all done,
 you should be able to navigate to the home page of your CLAW instance and see your content brought over from
 Islandora 7.x!
 
-SHOW MIGRATED CONTENT ON HOMEPAGE
-![Migration](docs/images/migrate1.jpg)
+![Content in CLAW](docs/images/content_in_claw.png)
 
 If you click on any node you should see all its metadata, which has been extracted from its MODS and Solr documents.
+Here's the original object in Islandora 7.x:
 
-Clicking on the Media tab will reveal all of the datastreams migrated over from 7.x, which you can now manage through CLAW.
+![Free Smells in 7x](docs/images/free_smells_in_7x.png)
+
+And here it is in Islandora CLAW:
+
+![Free Smells in CLAW](docs/images/free_smells_in_claw.png)
+
+Clicking on the Media tab will reveal all of the datastreams migrated over from 7.x, which you can now manage through CLAW.  Here's the original datastreams in Islandora 7.x:
+
+![Free Smells Datastreams](docs/images/free_smells_datastreams.png)
+
+And here they are in Islandora CLAW as Media:
+
+![Free Smells Media](docs/images/free_smells_media.png)
+
+You can also check out the collection itself, which should have its "Members" block populated:
+
+![Collection in CLAW](docs/images/collection_in_claw.png)
 
 ## How this migration works
 You provide a query, as `q` in the source plugin configuration, that defines which objects get migrated.  The PIDS of those
