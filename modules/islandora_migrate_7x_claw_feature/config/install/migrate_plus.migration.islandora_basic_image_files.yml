@@ -15,8 +15,8 @@ migration_group: islandora_7x
 label: 'Basic Image Objects OBJ'
 source:
   plugin: islandora
-  solr_base_url: 'http://192.168.0.120:8080/solr'
-  fedora_base_url: 'http://192.168.0.120:8080/fedora'
+  solr_base_url: 'http://97.107.189.65:8080/solr'
+  fedora_base_url: 'http://97.107.189.65:8080/fedora'
   islandora_type: datastreams
   datastream_solr_field: fedora_datastreams_ms
   data_fetcher_plugin: http
@@ -31,7 +31,7 @@ source:
   constants:
     destination_directory: 'fedora://masters'
     extension: jpg
-    fedora_base_url: 'http://192.168.0.120:8080/fedora'
+    fedora_base_url: 'http://97.107.189.65:8080/fedora'
     objects_string: objects
     datastreams_string: datastreams
     content_string: content

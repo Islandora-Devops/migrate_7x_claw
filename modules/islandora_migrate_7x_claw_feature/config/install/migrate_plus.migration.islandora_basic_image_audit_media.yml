@@ -6,13 +6,13 @@ dependencies:
       - migrate_7x_claw
       - migrate_plus
       - islandora
-id: islandora_basic_image_audit
+id: islandora_basic_image_audit_media
 class: null
 field_plugin_method: null
 cck_plugin_method: null
 migration_tags: null
 migration_group: islandora_7x
-label: 'Basic Image Objects AUDIT File'
+label: 'Basic Image Objects AUDIT Media'
 source:
   plugin: islandora
   solr_base_url: 'http://97.107.189.65:8080/solr'
@@ -38,10 +38,6 @@ source:
       name: PID
       label: PID
       selector: '@PID'
-    -
-      name: audit_ds
-      label: Audit Datastream
-      selector: 'foxml:datastream[@ID = "AUDIT"]/foxml:datastreamVersion/foxml:xmlContent[1]'
   ids:
     PID:
       type: string
@@ -57,29 +53,25 @@ process:
       plugin: str_replace
       search: ':'
       replace: _
-  filemime: constants/mimetype
-  uid: constants/creator_uid
-  filename:
+  name:
     plugin: concat
     delimiter: .
     source:
       - '@digital_id'
       - constants/extension
-  destination:
-    plugin: concat
-    delimiter: /
-    source:
-      - constants/destination_directory
-      - '@filename'
-  uri:
-    -
-      plugin: flatten
-      source:
-        - '@destination'
-        - audit_ds 
-    -
-      plugin: file_blob
+  field_media_file:
+    plugin: migration_lookup
+    migration: islandora_basic_image_audit
+    source: PID
+    no_stub: true
+  field_media_of:
+    plugin: migration_lookup
+    migration: islandora_basic_image
+    source: PID
+    no_stub: true
+  uid: constants/creator_uid
 destination:
-  plugin: 'entity:file'
-  default_bundle: file 
+  plugin: 'entity:media'
+  default_bundle: file
 migration_dependencies: null
+
