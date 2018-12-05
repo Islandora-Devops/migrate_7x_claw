@@ -15,8 +15,8 @@ migration_group: islandora_7x
 label: 'Basic Image Objects AUDIT File'
 source:
   plugin: islandora
-  solr_base_url: 'http://97.107.189.65:8080/solr'
-  fedora_base_url: 'http://97.107.189.65:8080/fedora'
+  solr_base_url: 'http://10.0.2.2:18080/solr'
+  fedora_base_url: 'http://10.0.2.2:18080/fedora'
   data_fetcher_plugin: http
   authentication:
     plugin: basic
@@ -31,7 +31,7 @@ source:
     mimetype: application/xml
     extension: xml
     dsid: AUDIT
-    fedora_base_url: 'http://97.107.189.65:8080/fedora'
+    fedora_base_url: 'http://10.0.2.2:18080/fedora'
     creator_uid: 1
   fields:
     -
