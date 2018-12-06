@@ -15,10 +15,10 @@ migration_group: islandora_7x
 label: 'Islandora Objects'
 source:
   plugin: islandora
-  solr_base_url: 'http://10.0.2.2:18080/solr'
+  solr_base_url: 'http://97.107.189.65:8080/solr'
   q: 'RELS_EXT_isMemberOfCollection_uri_ms:"info:fedora/islandora:sp_basic_image_collection" OR PID:"islandora:sp_basic_image_collection"' 
   row_type: solr
-  fedora_base_url: 'http://10.0.2.2:18080/fedora'
+  fedora_base_url: 'http://97.107.189.65:8080/fedora'
   data_fetcher_plugin: http
   authentication:
     plugin: basic
@@ -72,7 +72,7 @@ source:
     -
       name: member_of
       label: 'Member Of'
-      selector: 'RELS_EXT_isMemberOfCollection_uri_s'
+      selector: 'RELS_EXT_isMemberOfCollection_uri_ms'
     -
       name: person_agents 
       label: "Person agents"
@@ -304,4 +304,11 @@ process:
 destination:
   plugin: 'entity:node'
   default_bundle: islandora_object
-migration_dependencies: null
+migration_dependencies:
+  required:
+    - migrate_plus.migration.islandora_person
+    - migrate_plus.migration.islandora_corporate
+    - migrate_plus.migration.islandora_subject
+    - migrate_plus.migration.islandora_geographic
+    - migrate_plus.migration.islandora_7x_tags
+  optional: { }

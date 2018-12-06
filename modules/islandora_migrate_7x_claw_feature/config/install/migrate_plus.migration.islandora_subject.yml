@@ -15,10 +15,10 @@ migration_group: islandora_7x
 label: 'Islandora Subject'
 source:
   plugin: islandora
-  solr_base_url: 'http://10.0.2.2:18080/solr'
+  solr_base_url: 'http://97.107.189.65:8080/solr'
   q: 'fedora_datastreams_ms:MODS'
   row_type: MODS
-  fedora_base_url: 'http://10.0.2.2:18080/fedora'
+  fedora_base_url: 'http://97.107.189.65:8080/fedora'
   data_fetcher_plugin: http
   authentication:
     plugin: basic
@@ -41,5 +41,6 @@ process:
 destination:
   plugin: 'entity:taxonomy_term'
   default_bundle: subject 
-migration_dependencies: null
-
+migration_dependencies:
+  required: { }
+  optional: { }
