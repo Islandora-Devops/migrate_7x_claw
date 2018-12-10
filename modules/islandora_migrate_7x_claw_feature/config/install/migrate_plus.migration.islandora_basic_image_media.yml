@@ -97,18 +97,27 @@ process:
     migration: islandora_basic_image
     source: PID
     no_stub: true
-  field_tags:
+  field_media_use:
     -
       plugin: static_map
       source: DSID
       map:
-        OBJ: 'Preservation Master'
+        OBJ: http://pcdm.org/use#OriginalFile
+        PDFA: http://pcdm.org/use#PreservationMasterFile
+        OCR: http://pcdm.org/use#ExtractedText
+        TN: http://pcdm.org/use#ThumbnailImage
+        MEDIUM_SIZE: http://pcdm.org/use#ServiceFile
+        JP2: http://pcdm.org/use#IntermediateFile
+        RELS-EXT: http://islandora.ca/ontology/relsext
+        DC: http://purl.org/dc/elements/1.1
+        MODS: http://www.loc.gov/mods/v3
+        TECHMD: http://hul.harvard.edu/ois/xml/ns/fits/fits_output
       default_value: Datastream
     -
       plugin: entity_lookup
-      value_key: name
+      value_key: field_external_uri
       bundle_key: vid
-      bundle: tags
+      bundle: islandora_media_use
       entity_type: taxonomy_term
       ignore_case: true
   bundle:
