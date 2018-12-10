@@ -1,0 +1,171 @@
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - migrate_7x_claw
+      - migrate_plus
+      - islandora
+id: islandora_media
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags: null
+migration_group: islandora_7x
+label: 'Islandora Media'
+source:
+  plugin: islandora
+  solr_base_url: 'http://97.107.189.65:8080/solr'
+  q: 'RELS_EXT_isMemberOfCollection_uri_ms:"info:fedora/islandora:sp_basic_image_collection" OR PID:"islandora:sp_basic_image_collection"' 
+  fedora_base_url: 'http://97.107.189.65:8080/fedora'
+  islandora_type: datastreams
+  datastream_solr_field: fedora_datastreams_ms
+  data_fetcher_plugin: http
+  authentication:
+    plugin: basic
+    username: fedoraAdmin
+    password: fedoraAdmin
+  data_parser_plugin: tuque_datastreams
+  item_selector: '/foxml:digitalObject'
+  constants:
+    creator_uid: 1
+  fields:
+    -
+      name: PID
+      label: PID
+      selector: PID
+    -
+      name: DSID
+      label: 'Datastream ID'
+      selector: DSID
+    -
+      name: mimetype
+      label: Mimetype
+      selector: mimetype
+    -
+      name: size
+      label: 'Datastream size'
+      selector: size
+    -
+      name: format
+      label: Format
+      selector: format
+    -
+      name: checksum
+      label: Checksum
+      selector: checksum
+  ids:
+    PID_DSID:
+      type: string
+process:
+  uid: constants/creator_uid
+  field_mime_type:
+    plugin: skip_on_empty
+    method: process
+    source: mimetype
+  field_file_size:
+    plugin: skip_on_empty
+    method: process
+    source: filesize
+  field_media_image/target_id:
+    plugin: migration_lookup
+    migration: islandora_files
+    source: PID_DSID
+    no_stub: true
+  field_media_file/target_id:
+    plugin: migration_lookup
+    migration: islandora_files
+    source: PID_DSID
+    no_stub: true
+  field_media_audio_file/target_id:
+    plugin: migration_lookup
+    migration: islandora_files
+    source: PID_DSID
+    no_stub: true
+  field_media_video_file/target_id:
+    plugin: migration_lookup
+    migration: islandora_files
+    source: PID_DSID
+    no_stub: true
+  field_media_image/display:
+    plugin: default_value
+    default_value: 1
+  field_media_file/display:
+    plugin: default_value
+    default_value: 1
+  field_media_audio_file/display:
+    plugin: default_value
+    default_value: 1
+  field_media_video_file/display:
+    plugin: default_value
+    default_value: 1
+  field_media_image/description:
+    plugin: default_value
+    default_value: ''
+  field_media_file/description:
+    plugin: default_value
+    default_value: ''
+  field_media_audio_file/description:
+    plugin: default_value
+    default_value: ''
+  field_media_video_file/description:
+    plugin: default_value
+    default_value: ''
+  field_media_of:
+    plugin: migration_lookup
+    migration: islandora_objects
+    source: PID
+    no_stub: true
+  field_media_use:
+    -
+      plugin: static_map
+      source: DSID
+      map:
+        OBJ: http://pcdm.org/use#OriginalFile
+        PDFA: http://pcdm.org/use#PreservationMasterFile
+        OCR: http://pcdm.org/use#ExtractedText
+        HOCR: http://pcdm.org/use#ExtractedText
+        FULL_TEXT: http://pcdm.org/use#ExtractedText
+        TN: http://pcdm.org/use#ThumbnailImage
+        JPG: http://pcdm.org/use#ServiceFile
+        MEDIUM_SIZE: http://pcdm.org/use#ServiceFile
+        PREVIEW: http://pcdm.org/use#ServiceFile
+        MP4: http://pcdm.org/use#ServiceFile
+        JP2: http://pcdm.org/use#IntermediateFile
+        MKV: http://pcdm.org/use#IntermediateFile
+        RELS-EXT: http://islandora.ca/ontology/relsext
+        DC: http://purl.org/dc/elements/1.1
+        MODS: http://www.loc.gov/mods/v3
+        TECHMD: http://hul.harvard.edu/ois/xml/ns/fits/fits_output
+        PROXY_MP3: http://pcdm.org/use#ServiceFile
+        COLLECTION_POLICY: http://islandora.ca/collection-policy
+      default_value: Datastream
+    -
+      plugin: entity_lookup
+      value_key: field_external_uri
+      bundle_key: vid
+      bundle: islandora_media_use
+      entity_type: taxonomy_term
+      ignore_case: true
+  bundle:
+    plugin: static_map
+    source: mimetype
+    map:
+      image/jpeg: image
+      image/jpg: image
+      image/png: image
+      image/gif: image
+      audio/mpeg: audio 
+      audio/wav: audio 
+      audio/aac: audio 
+      video/mp4: video
+    default_value: file
+destination:
+  plugin: 'entity:media'
+migration_dependencies:
+  required:
+    - migrate_plus.migration.islandora_files
+    - migrate_plus.migration.islandora_objects
+    - migrate_plus.migration.islandora_7x_tags
+    - migrate_plus.migration.islandora_audit_media
+  optional: { }
