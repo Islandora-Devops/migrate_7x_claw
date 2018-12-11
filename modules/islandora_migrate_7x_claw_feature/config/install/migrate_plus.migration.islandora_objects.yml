@@ -135,11 +135,8 @@ source:
 process:
   title: title 
   field_alternative_title: subtitle
-  field_identifier: 
-    plugin: flatten
-    source:
-      - PID 
-      - identifier
+  field_identifier: identifier
+  field_pid: PID
   field_description: description
   field_extent: extent
   type:
