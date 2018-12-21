@@ -1,0 +1,123 @@
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - migrate_7x_claw
+      - migrate_plus
+      - islandora
+id: islandora_files
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags: null
+migration_group: islandora_7x
+label: 'Islandora Files'
+source:
+  plugin: islandora
+  solr_base_url: 'http://97.107.189.65:8080/solr'
+  q: 'RELS_EXT_isMemberOfCollection_uri_ms:"info:fedora/islandora:sp_basic_image_collection" OR PID:"islandora:sp_basic_image_collection"' 
+  fedora_base_url: 'http://97.107.189.65:8080/fedora'
+  islandora_type: datastreams
+  datastream_solr_field: fedora_datastreams_ms
+  data_fetcher_plugin: http
+  authentication:
+    plugin: basic
+    username: fedoraAdmin
+    password: fedoraAdmin
+  data_parser_plugin: tuque_datastreams
+  item_selector: '/foxml:digitalObject'
+  constants:
+    fedora_base_url: 'http://97.107.189.65:8080/fedora'
+    destination_directory: 'fedora://'
+    extension: jpg
+    objects_string: objects
+    datastreams_string: datastreams
+    content_string: content
+    obj_contents_suffix: datastreams/OBJ/content
+    creator_uid: 1
+  fields:
+    -
+      name: PID
+      label: PID
+      selector: ID
+    -
+      name: mimetype
+      label: Mimetype
+      selector: mimetype
+    -
+      name: DSID
+      label: 'Datastream ID'
+      selector: DSID
+  ids:
+    PID_DSID:
+      type: string
+process:
+  type:
+    plugin: default_value
+    default_value: image
+  digital_id:
+    plugin: str_replace
+    source: PID_DSID
+    search: ':'
+    replace: _
+  remote_path:
+    plugin: concat
+    delimiter: /
+    source:
+      - constants/fedora_base_url
+      - constants/objects_string
+      - PID
+      - constants/datastreams_string
+      - DSID
+      - constants/content_string
+  extension:
+    plugin: static_map
+    source: mimetype
+    map:
+      text/xml: xml
+      application/xml: xml
+      application/rdf+xml: xml
+      application/pdf: pdf 
+      image/jpeg: jpg
+      image/tiff: tiff
+      image/tif: tiff
+      image/jpg: jpg
+      image/png: png
+      image/gif: gif
+      image/jp2: jp2
+      audio/mpeg: mp3
+      audio/wav: wav 
+      audio/aac: aac 
+      video/mp4: mp4
+      video/x-matroska: mkv
+      text/plain: txt
+  filename:
+    plugin: concat
+    delimiter: .
+    source:
+      - '@digital_id'
+      - '@extension'
+  local_path:
+    plugin: concat
+    delimiter: /
+    source:
+      - constants/destination_directory
+      - '@filename'
+  uri:
+    plugin: download
+    source:
+      - '@remote_path'
+      - '@local_path'
+    settings:
+      authentication:
+        plugin: basic
+        username: fedoraAdmin
+        password: fedoraAdmin
+  uid: constants/creator_uid
+destination:
+  plugin: 'entity:file'
+  default_bundle: image
+migration_dependencies:
+  required: { }
+  optional: { }

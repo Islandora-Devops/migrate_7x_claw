@@ -95,6 +95,7 @@ class FedoraDatastream extends ProcessPluginBase implements ContainerFactoryPlug
    */
   public function transform($value, MigrateExecutableInterface $migrate_executable, Row $row, $destination_property) {
     if (!is_null($value) && $value instanceof \SimpleXMLElement) {
+echo ("I MADE IT!");
       foreach ($value->attributes() as $key => $attribute) {
         if (strtolower($key) == 'size') {
           $size = (int) $attribute;

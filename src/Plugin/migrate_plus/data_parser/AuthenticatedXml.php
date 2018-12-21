@@ -2,7 +2,7 @@
 
 namespace Drupal\migrate_7x_claw\Plugin\migrate_plus\data_parser;
 
-use Drupal\migrate_plus\Plugin\migrate_plus\data_parser\Xml;
+use Drupal\migrate_plus\Plugin\migrate_plus\data_parser\SimpleXml;
 
 /**
  * Obtain XML data for migration using the XMLReader pull parser.
@@ -12,7 +12,7 @@ use Drupal\migrate_plus\Plugin\migrate_plus\data_parser\Xml;
  *   title = @Translation("Authenticated XML")
  * )
  */
-class AuthenticatedXml extends Xml {
+class AuthenticatedXml extends SimpleXml {
 
   /**
    * Update the configuration for the dataparserplugin.
@@ -33,29 +33,31 @@ class AuthenticatedXml extends Xml {
   /**
    * {@inheritdoc}
    */
-  protected function openSourceUrl($url) {
-    // (Re)open the provided URL.
-    $this->reader->close();
-
-    // Clear XML error buffer. Other Drupal code that executed during the
-    // migration may have polluted the error buffer and could create false
-    // positives in our error check below. We are only concerned with errors
-    // that occur from attempting to load the XML string into an object here.
-    libxml_clear_errors();
-
-    if (is_null($url)) {
-      // No URL means no source.
-      return FALSE;
+  protected function fetchNextRow() {
+    $target_element = array_shift($this->matches);
+    // If we've found the desired element, populate the currentItem and
+    // currentId with its data.
+    if ($target_element !== FALSE && !is_null($target_element)) {
+      foreach ($this->fieldSelectors() as $field_name => $xpath) {
+        foreach ($target_element->xpath($xpath) as $value) {
+          if ($value->children() && !trim((string) $value)) {
+            $this->currentItem[$field_name] = $value;
+          }
+          elseif (!trim((string) $value)){
+            $this->currentItem[$field_name][] = $value->asXML();
+          }
+          else {
+            $this->currentItem[$field_name][] = (string) $value;
+          }
+        }
+      }
+      // Reduce single-value results to scalars.
+      foreach ($this->currentItem as $field_name => $values) {
+        if (count($values) == 1) {
+          $this->currentItem[$field_name] = reset($values);
+        }
+      }
     }
-
-    // Get the XML using the data fetcher to allow us to access URLs requiring
-    // authentication.
-    $xml = $this->getDataFetcherPlugin()
-      ->getResponseContent($url)
-      ->getContents();
-
-    return $this->reader->XML($xml, NULL, \LIBXML_NOWARNING);
-
   }
 
   /**
