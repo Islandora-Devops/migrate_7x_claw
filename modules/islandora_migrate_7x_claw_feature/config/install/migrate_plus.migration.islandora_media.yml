@@ -15,9 +15,9 @@ migration_group: islandora_7x
 label: 'Islandora Media'
 source:
   plugin: islandora
-  solr_base_url: 'http://97.107.189.65:8080/solr'
+  solr_base_url: 'http://10.0.2.2:8080/solr'
   q: 'RELS_EXT_isMemberOfCollection_uri_ms:"info:fedora/islandora:sp_basic_image_collection" OR PID:"islandora:sp_basic_image_collection"' 
-  fedora_base_url: 'http://97.107.189.65:8080/fedora'
+  fedora_base_url: 'http://10.0.2.2:8080/fedora'
   islandora_type: datastreams
   datastream_solr_field: fedora_datastreams_ms
   data_fetcher_plugin: http
