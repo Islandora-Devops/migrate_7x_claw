@@ -15,8 +15,8 @@ migration_group: islandora_7x
 label: 'AUDIT Media'
 source:
   plugin: islandora
-  solr_base_url: 'http://10.0.2.2:8080/solr'
-  fedora_base_url: 'http://10.0.2.2:8080/fedora'
+  solr_base_url: 'http://10.0.2.2:18080/solr'
+  fedora_base_url: 'http://10.0.2.2:18080/fedora'
   data_fetcher_plugin: http
   authentication:
     plugin: basic
@@ -31,7 +31,7 @@ source:
     mimetype: application/xml
     extension: xml
     dsid: AUDIT
-    fedora_base_url: 'http://10.0.2.2:8080/fedora'
+    fedora_base_url: 'http://10.0.2.2:18080/fedora'
     creator_uid: 1
     audit_url: http://islandora.ca/audit-trail
   fields:
@@ -66,10 +66,15 @@ process:
     source: constants/audit_url
     no_stub: true
   field_media_file:
-    plugin: migration_lookup
-    migration: islandora_audit_file
-    source: PID
-    no_stub: true
+    -
+      plugin: migration_lookup
+      migration: islandora_audit_file
+      source: PID
+      no_stub: true
+    -
+      plugin: skip_on_empty
+      method: row
+      message: 'Associated audit file for media does not exist, skipping'
   field_media_of:
     plugin: migration_lookup
     migration: islandora_objects
