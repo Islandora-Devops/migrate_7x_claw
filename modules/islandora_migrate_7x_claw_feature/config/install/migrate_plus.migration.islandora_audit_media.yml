@@ -66,10 +66,15 @@ process:
     source: constants/audit_url
     no_stub: true
   field_media_file:
-    plugin: migration_lookup
-    migration: islandora_audit_file
-    source: PID
-    no_stub: true
+    -
+      plugin: migration_lookup
+      migration: islandora_audit_file
+      source: PID
+      no_stub: true
+    -
+      plugin: skip_on_empty
+      method: row
+      message: 'Associated audit file for media does not exist, skipping'
   field_media_of:
     plugin: migration_lookup
     migration: islandora_objects
