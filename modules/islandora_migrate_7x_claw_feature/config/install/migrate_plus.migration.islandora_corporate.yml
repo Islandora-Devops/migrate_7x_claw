@@ -15,10 +15,10 @@ migration_group: islandora_7x
 label: 'Islandora Corporate'
 source:
   plugin: islandora
-  solr_base_url: 'http://10.0.2.2:18080/solr'
+  solr_base_url: 'http://10.0.2.2:8080/solr'
   q: 'fedora_datastreams_ms:MODS'
   row_type: MODS
-  fedora_base_url: 'http://10.0.2.2:18080/fedora'
+  fedora_base_url: 'http://10.0.2.2:8080/fedora'
   data_fetcher_plugin: http
   authentication:
     plugin: basic
