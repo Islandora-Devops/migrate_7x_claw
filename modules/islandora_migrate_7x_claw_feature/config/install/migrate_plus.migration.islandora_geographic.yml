@@ -16,7 +16,7 @@ label: 'Islandora Geographic'
 source:
   plugin: islandora
   solr_base_url: 'http://10.0.2.2:8080/solr'
-  q: 'RELS_EXT_isMemberOfCollection_uri_ms:"info:fedora/islandora:sp_basic_image_collection" OR PID:"islandora:sp_basic_image_collection"'fedora_datastreams_ms:MODS'
+  q: 'fedora_datastreams_ms:MODS'
   row_type: MODS
   fedora_base_url: 'http://10.0.2.2:8080/fedora'
   data_fetcher_plugin: http
