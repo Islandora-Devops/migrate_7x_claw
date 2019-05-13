@@ -213,7 +213,7 @@ class Islandora extends SourcePluginExtension {
         for ($x = 0; $x < $loops; $x += 1) {
           // Now that we know how many objects, loop and count datastreams.
           $start = ($batch_size * $x);
-          $query = $this->getQuery($start, $batch_size);
+          $query = $this->getQuery($start, $batch_size, [$this->datastreamSolrField]);
           $result = $this->getDataFetcherPlugin()->getResponseContent($query)->getContents();
           $body = json_decode($result, TRUE);
           foreach ($body['response']['docs'] as $object) {
@@ -316,15 +316,17 @@ class Islandora extends SourcePluginExtension {
    *   Row to start on for paging queries.
    * @param int $rows
    *   Number of rows to return for paging queries.
+   * @param array $additionalFields
+   *   Any additional fields to return in query response.
    *
    * @return string
    *   The Full query URL.
    */
-  private function getQuery($start = 0, $rows = 200) {
+  private function getQuery($start = 0, $rows = 200, $additionalFields = []) {
     $params = [];
     $params['rows'] = $rows;
     $params['start'] = $start;
-    $params['fl'] = 'PID';
+    $params['fl'] = 'PID' . (count($additionalFields) > 0 ? "," . implode(",", $additionalFields) : "");
     $params['q'] = $this->q;
     $params['wt'] = 'json';
     $params['sort'] = 'PID+desc';
