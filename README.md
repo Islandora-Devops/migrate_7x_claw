@@ -1,9 +1,9 @@
 ## Introduction
 This module contains plugins to import data from a Fedora 3 Islandora instance
-into an Islandora CLAW instance. It also contains a feature as a submodule
+into an Islandora 8 instance. It also contains a feature as a submodule
 that contains some example migrations.  The example migrations are based on forms from vanilla Islandora 7.x solution
-packs, and are meant to work with the fields defined in `islandora_demo`.  If you customized your MODS forms, then you
-will also need to customize the example migration and `islandora_demo`.
+packs, and are meant to work with the fields defined in `islandora_defaults`.  If you customized your MODS forms, then you
+will also need to customize the example migration and `islandora_defaults`.
 
 Currently, the following content models can be migrated over with full functionality:
 
@@ -55,7 +55,7 @@ migrations are configured to look for `islandora:sp_basic_image_collection` and 
     RELS_EXT_isMemberOfCollection_uri_ms:"info:fedora/islandora:sp_basic_image_collection" OR PID:"islandora:sp_basic_image_collection" 
   ```
 You can easily import a collection of your own by changing the PID in the above query, or you can provide your own
-query to migrate over objects in other ways (such as per content model, in order by date created, etc...).  If you can write a Solr select query for it, you can migrate it into CLAW.  Omitting `q` from configuration will default to `*:*`
+query to migrate over objects in other ways (such as per content model, in order by date created, etc...).  If you can write a Solr select query for it, you can migrate it into Islandora 8.  Omitting `q` from configuration will default to `*:*`
 for the Solr query.  
 
 Once you've updated the configuration, you need to re-import the feature to load your changes.  You can do this with `drush`:
@@ -100,31 +100,31 @@ If you select "Import", and then click "Execute", it will run the migration. It 
   
 Then you can run the "Islandora Media" migration, which depends on the remaining migrations.  Running it effectively
 runs the entire group of migrations other than the "7.x Tags Migration from CSV" migration.  After they're all done,
-you should be able to navigate to the home page of your CLAW instance and see your content brought over from
+you should be able to navigate to the home page of your Islandora 8 instance and see your content brought over from
 Islandora 7.x!
 
-![Content in CLAW](docs/images/content_in_claw.png)
+![Content in Islandora 8](docs/images/content_in_claw.png)
 
 If you click on any node you should see all its metadata, which has been extracted from its MODS and Solr documents.
 Here's the original object in Islandora 7.x:
 
 ![Free Smells in 7x](docs/images/free_smells_in_7x.png)
 
-And here it is in Islandora CLAW:
+And here it is in Islandora 8:
 
-![Free Smells in CLAW](docs/images/free_smells_in_claw.png)
+![Free Smells in Islandora 8](docs/images/free_smells_in_claw.png)
 
-Clicking on the Media tab will reveal all of the datastreams migrated over from 7.x, which you can now manage through CLAW.  Here's the original datastreams in Islandora 7.x:
+Clicking on the Media tab will reveal all of the datastreams migrated over from 7.x, which you can now manage through Islandora 8.  Here's the original datastreams in Islandora 7.x:
 
 ![Free Smells Datastreams](docs/images/free_smells_datastreams.png)
 
-And here they are in Islandora CLAW as Media:
+And here they are in Islandora 8 as Media:
 
 ![Free Smells Media](docs/images/free_smells_media.png)
 
 You can also check out the collection itself, which should have its "Members" block populated:
 
-![Collection in CLAW](docs/images/collection_in_claw.png)
+![Collection in Islandora 8](docs/images/collection_in_claw.png)
 
 ## How this migration works
 You provide a query, as `q` in the source plugin configuration, that defines which objects get migrated.  For each
