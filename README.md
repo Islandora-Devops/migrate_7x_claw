@@ -37,7 +37,7 @@ drush en islandora_migrate_7x_claw_feature
 ## Configuration
 
 By default, the migrations are configured to work with an `islandora_vagrant` instance running on the same host as a
-`claw-playbook` instance, which is convienent for development and testing. But for your Islandora 7.x instance, the
+`claw-playbook` instance, which is convenient for development and testing. But for your Islandora 7.x instance, the
 following config will need to be set the same way on the source plugin of each migration (except for the
 "7.x Tags Migration from CSV" migration):  
 
