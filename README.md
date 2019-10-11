@@ -28,7 +28,7 @@ Download this module, its feature, and its dependencies with composer
 composer require islandora/migrate_7x_claw
 ```
 
-Install the module and example migrations at the same time using drush
+Install the module and example migrations at the same time using Drush
 
 ```
 drush en islandora_migrate_7x_claw_feature
