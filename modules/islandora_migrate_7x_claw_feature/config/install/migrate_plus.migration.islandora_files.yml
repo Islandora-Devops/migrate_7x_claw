@@ -16,7 +16,7 @@ label: 'Islandora Files'
 source:
   plugin: islandora
   solr_base_url: 'http://10.0.2.2:8080/solr'
-  q: 'RELS_EXT_isMemberOfCollection_uri_ms:"info:fedora/islandora:sp_basic_image_collection" OR PID:"islandora:sp_basic_image_collection"' 
+  q: 'RELS_EXT_isMemberOfCollection_uri_ms:"info:fedora/islandora:sp_basic_image_collection" OR PID:"islandora:sp_basic_image_collection"'
   fedora_base_url: 'http://10.0.2.2:8080/fedora'
   islandora_type: datastreams
   datastream_solr_field: fedora_datastreams_ms
@@ -78,7 +78,8 @@ process:
       text/xml: xml
       application/xml: xml
       application/rdf+xml: xml
-      application/pdf: pdf 
+      application/pdf: pdf
+      application/x-binary: bin
       image/jpeg: jpg
       image/tiff: tiff
       image/tif: tiff
@@ -87,8 +88,8 @@ process:
       image/gif: gif
       image/jp2: jp2
       audio/mpeg: mp3
-      audio/wav: wav 
-      audio/aac: aac 
+      audio/wav: wav
+      audio/aac: aac
       video/mp4: mp4
       video/x-matroska: mkv
       text/plain: txt
