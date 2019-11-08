@@ -1,0 +1,9 @@
+migrate_7x_claw.settings:
+  path: '/admin/config/islandora/migrate_7x_claw'
+  defaults:
+    _form: 'Drupal\migrate_7x_claw\Form\MIGRATE7XCLAWSettingsForm'
+    _title: 'Islandora Migration Settings'
+  requirements:
+    _permission: 'administer site configuration'
+  options:
+    _admin_route: TRUE

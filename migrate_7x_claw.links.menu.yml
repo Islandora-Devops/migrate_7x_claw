@@ -1,0 +1,6 @@
+migrate_7x_claw.settings:
+  title: 'Migration Settings'
+  description: 'Control settings for 7x to 8x migration'
+  route_name: migrate_7x_claw.settings
+  parent: system.admin_config_islandora
+  weight: 10

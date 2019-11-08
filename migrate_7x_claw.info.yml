@@ -6,3 +6,4 @@ core: 8.x
 dependencies:
   - drupal:migrate
   - migrate_plus:migrate_plus
+configure: migrate_7x_claw.settings
