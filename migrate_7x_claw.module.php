@@ -21,9 +21,6 @@ function get_migrate_install() {
     ->set('fedora-endpoint-url', \Drupal::config('migrate_7x_claw.settings')
     ->set('oldfedoraUsername', \Drupal::config('migrate_7x_claw.settings')
     ->set('oldfedorapsswd', \Drupal::config('migrate_7x_claw.settings')
-    ->set('newfedoraUsername', \Drupal::config('migrate_7x_claw.settings')
-    ->set('newfedorapsswd', \Drupal::config('migrate_7x_claw.settings')
-    ->set('sevenx_url', \Drupal::config('migrate_7x_claw.settings')
     ->set('solr-endpoint-url', \Drupal::config('migrate_7x_claw.settings')
     ->set('migrate_7x_claw_solr_q', \Drupal::config('migrate_7x_claw.settings')
     ->save();

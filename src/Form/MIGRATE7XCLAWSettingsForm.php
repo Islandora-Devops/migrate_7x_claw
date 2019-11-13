@@ -105,8 +105,10 @@ class MIGRATE7XCLAWSettingsForm extends ConfigFormBase {
     $config->set('fedora-endpoint-url', $form_state->getValue('fedora-endpoint-url'));
     $islandora_audit_file_config->set('source.fedora_base_url', $form_state->getValue('fedora-endpoint-url'));
     $islandora_audit_media_config->set('source.fedora_base_url', $form_state->getValue('fedora-endpoint-url'));
+    $islandora_audit_media_config->set('source.constants.fedora_base_url', $form_state->getValue('fedora-endpoint-url'));
     $islandora_corporate_config->set('source.fedora_base_url', $form_state->getValue('fedora-endpoint-url'));
     $islandora_files_config->set('source.fedora_base_url', $form_state->getValue('fedora-endpoint-url'));
+    $islandora_files_config->set('source.constants.fedora_base_url', $form_state->getValue('fedora-endpoint-url'));
     $islandora_geographic_config->set('source.fedora_base_url', $form_state->getValue('fedora-endpoint-url'));
     $islandora_media_config->set('source.fedora_base_url', $form_state->getValue('fedora-endpoint-url'));
     $islandora_objects_config->set('source.fedora_base_url', $form_state->getValue('fedora-endpoint-url'));
