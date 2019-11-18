@@ -18,7 +18,7 @@ Currently, the following content models can be migrated over with full functiona
 If you want some sample Basic Image objects with metadata made from stock forms, check out [this zip
 file](docs/examples/sample_objects.zip) that you can use with `islandora_zip_batch_importer`. All the images were
 obtained from [Pexels](https://www.pexels.com/) and are free to use for personal or business purposes, with the
-original photographers attributed in the MODS. 
+original photographers attributed in the MODS.
 
 ## Installation
 
@@ -33,26 +33,48 @@ Install the module and example migrations at the same time using Drush
 ```
 drush en islandora_migrate_7x_claw_feature
 ```
- 
+
 ## Configuration
 
 By default, the migrations are configured to work with an `islandora_vagrant` instance running on the same host as a
 `claw-playbook` instance, which is convenient for development and testing. But for your Islandora 7.x instance, the
 following config will need to be set the same way on the source plugin of each migration (except for the
-"7.x Tags Migration from CSV" migration):  
+"7.x Tags Migration from CSV" migration):
 
+### Admin page
+__/admin/config/islandora/migrate_7x_claw__
+
+![Screen Shot 2019-11-08 at 12 32 30 PM](https://user-images.githubusercontent.com/2738244/68497994-da6e6400-0223-11ea-8247-d6b3dd117f80.png)
+
+Please read the _Command Line Configuration_ section for input value descriptions and purposes. Once saved you can run the migration groups tasks (admin/structure/migrate/manage/islandora_7x/migrations)
+
+#### Optional:
+To verify saved changes go to admin/config/development/configuration/single/export
+- Configuration type: migration group
+- Configuration Name: Each of the following should reflect the values given.
+  - migrate_plus.migration.islandora_audit_file
+  - migrate_plus.migration.islandora_audit_media
+  - migrate_plus.migration.islandora_corporate
+  - migrate_plus.migration.islandora_files
+  - migrate_plus.migration.islandora_geographic
+  - migrate_plus.migration.islandora_media
+  - migrate_plus.migration.islandora_objects
+  - migrate_plus.migration.islandora_person
+  - migrate_plus.migration.islandora_subject
+
+### Command Line Configuration
 - `solr_base_url` should point to your Islandora 7.x Solr instance (i.e. `http://example.org:8080/solr`)
 - `fedora_base_url` should point to your Fedora 3 instance (i.e. `http://example.org:8080/fedora`)
-- The `username` and `password` for your Fedora 3 instance in the block 
+- The `username` and `password` for your Fedora 3 instance in the block
    ```
     plugin: basic
     username: fedoraAdmin
     password: fedoraAdmin
    ```
-- `q` is used to define a Solr query that selects which objects get migrated.  From a fresh clone, the 
+- `q` is used to define a Solr query that selects which objects get migrated.  From a fresh clone, the
 migrations are configured to look for `islandora:sp_basic_image_collection` and all its children with the following query:
   ```
-    RELS_EXT_isMemberOfCollection_uri_ms:"info:fedora/islandora:sp_basic_image_collection" OR PID:"islandora:sp_basic_image_collection" 
+    RELS_EXT_isMemberOfCollection_uri_ms:"info:fedora/islandora:sp_basic_image_collection" OR PID:"islandora:sp_basic_image_collection"
   ```
 You can easily import a collection of your own by changing the PID in the above query, or you can provide your own
 query to migrate over objects in other ways (such as per content model, in order by date created, etc...).  If you can write a Solr select query for it, you can migrate it into Islandora 8.  Omitting `q` from configuration will default to `*:*`
@@ -90,14 +112,14 @@ Clicking **Execute** on "7.x Tags Migration from CSV" migration displays a page 
 
 ![Execute Migration](docs/images/execute_migration.png)
 
-The operations you can run for a migration are 
+The operations you can run for a migration are
 * **Import** - import un-migrated objects (check the "Update" checkbox to re-run previously migrated objects)
 * **Rollback** - delete all the objects (if any) previously imported
 * **Stop** - stop a long running import.
 * **Reset** - reset an import that might have failed.
 
 If you select "Import", and then click "Execute", it will run the migration. It should process 5 items.
-  
+
 Then you can run the "Islandora Media" migration, which depends on the remaining migrations.  Running it effectively
 runs the entire group of migrations other than the "7.x Tags Migration from CSV" migration.  After they're all done,
 you should be able to navigate to the home page of your Islandora 8 instance and see your content brought over from

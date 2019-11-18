@@ -1,0 +1,5 @@
+fedora-endpoint-url: 'http://10.0.2.2:8080/fedora'
+oldfedoraUsername: fedoraAdmin
+oldfedorapsswd: fedoraAdmin
+solr-endpoint-url: 'http://10.0.2.2:8080/solr'
+migrate_7x_claw_solr_q: 'RELS_EXT_isMemberOfCollection_uri_ms:"info:fedora/islandora:sp_basic_image_collection" OR PID:"islandora:sp_basic_image_collection"'
