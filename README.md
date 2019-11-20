@@ -159,3 +159,50 @@ Collection hierarchy is preserved so long as all the collections are in the `q` 
 
 Subject, geographic, and person/corporate agents from MODS all get transformed into taxonomy terms, and content
 is tagged with these terms.
+
+## Advanced Drush commands
+Useful drush commands for working with the migration process.
+
+### Import command
+This starts the import process from the command line with the username and action specified.
+```shell
+$ drush --uri=http://localhost:8000 --userid=1 -y migrate:import --group islandora_7x --update
+        └─────────────────────────┘:└────────┘└─┘ └────────────┘ └──────────────────┘ └──────┘
+URL of Islandora 8 ───┘                │       │        │                │                │
+User Numeric ID  ──────────────────────┘       │        │                │                │
+send yes to confirmation(optional) ────────────┘        │                │                │
+Module and action ──────────────────────────────────────┘                │                │
+Group name ──────────────────────────────────────────────────────────────┘                │
+Update existing objects(optional) ────────────────────────────────────────────────────────┘
+```
+
+### Control the migration
+
+```shell
+$ drush migrate:rollback --update --limit="1000 items" --feedback="20 items" islandora_audit_media
+        └─────┘:└──────┘ └──────┘└───────────────────┘ └───────────────────┘ └───────────────────┘
+Module Name ┘      │         │           │                      │                      │
+Action ────────────┘         │           │                      │                      │
+confirmation(optional) ──────┘           │                      │                      │
+Number of unprocessed items to run ──────┘                      │                      │
+Number of items to display after completed ─────────────────────┘                      │
+Migration Step ────────────────────────────────────────────────────────────────────────┘
+```
+
+__Actions:__
+* import
+* __rollback__
+* stop
+* reset
+
+__Migrations Steps:__
+* islandora_7x_tags
+* islandora_audit_file
+* __islandora_audit_media__
+* islandora_corporate
+* islandora_files
+* islandora_geographic
+* islandora_media
+* islandora_objects
+* islandora_person
+* islandora_subject
