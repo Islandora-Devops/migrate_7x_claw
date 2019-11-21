@@ -9,6 +9,7 @@ namespace Drupal\migrate_7x_claw\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 
 /**
  * Defines a form to configure migrate_7x_claw module settings.
@@ -84,6 +85,17 @@ class MIGRATE7XCLAWSettingsForm extends ConfigFormBase {
       '#maxlength' => 1240,
       '#required' => TRUE,
     ];
+    if (!empty($config->get('oldfedorapsswd'))) {
+      $form['migrate_7x_claw_next'] = [
+        '#type' => 'fieldset',
+        '#title' => $this->t("Configuration Ready"),
+      ];
+      $form['migrate_7x_claw_next']['next'] = [
+        '#type' => 'markup',
+        '#markup' => 'Next Step: <a href="../../../admin/structure/migrate/manage/islandora_7x/migrations">Islandora Migration Import Page</a>',
+        '#weight' => '3',
+      ];
+    }
     return parent::buildForm($form, $form_state);
   }
 
