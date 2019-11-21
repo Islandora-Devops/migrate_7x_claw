@@ -86,15 +86,17 @@ class MIGRATE7XCLAWSettingsForm extends ConfigFormBase {
       '#required' => TRUE,
     ];
     if (!empty($config->get('oldfedorapsswd'))) {
-      $form['migrate_7x_claw_next'] = [
-        '#type' => 'fieldset',
-        '#title' => $this->t("Configuration Ready"),
-      ];
-      $form['migrate_7x_claw_next']['next'] = [
-        '#type' => 'markup',
-        '#markup' => 'Next Step: <a href="../../../admin/structure/migrate/manage/islandora_7x/migrations">Islandora Migration Import Page</a>',
-        '#weight' => '3',
-      ];
+      if ($config->get('oldfedorapsswd') != '') {
+        $form['migrate_7x_claw_next'] = [
+          '#type' => 'fieldset',
+          '#title' => $this->t("Configuration Ready"),
+        ];
+        $form['migrate_7x_claw_next']['next'] = [
+          '#type' => 'markup',
+          '#markup' => 'Next Step: <a href="../../../admin/structure/migrate/manage/islandora_7x/migrations">Islandora Migration Import Page</a>',
+          '#weight' => '3',
+        ];
+      }
     }
     return parent::buildForm($form, $form_state);
   }
@@ -181,6 +183,8 @@ class MIGRATE7XCLAWSettingsForm extends ConfigFormBase {
     $islandora_person_config->save();
     $islandora_subject_config->save();
     parent::submitForm($form, $form_state);
+    exec("drush --root=" . DRUPAL_ROOT . " migrate:status");
+    exec("drush --root=" . DRUPAL_ROOT . " cr");
   }
 
 }
