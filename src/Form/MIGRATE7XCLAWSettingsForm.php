@@ -154,6 +154,7 @@ class MIGRATE7XCLAWSettingsForm extends ConfigFormBase {
 
     $config->set('migrate_7x_claw_solr_q', $form_state->getValue('migrate_7x_claw_solr_q'));
     $islandora_audit_file_config->set('source.q', $form_state->getValue('migrate_7x_claw_solr_q'));
+    $islandora_audit_media_config->set('source.q', $form_state->getValue('migrate_7x_claw_solr_q'));
     $islandora_files_config->set('source.q', $form_state->getValue('migrate_7x_claw_solr_q'));
     $islandora_media_config->set('source.q', $form_state->getValue('migrate_7x_claw_solr_q'));
     $islandora_objects_config->set('source.q', $form_state->getValue('migrate_7x_claw_solr_q'));
