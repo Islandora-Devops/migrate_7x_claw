@@ -58,7 +58,7 @@ class AuthenticatedXml extends SimpleXml {
         }
       }
 
-      // Make the PID available as a field in teh migration
+      // Make the PID available as a field in the migration
       // This facilitates migrate_lookup, needed to migrate data
       // into paragraphs.
       if (empty($currentItem['PID'])) {
