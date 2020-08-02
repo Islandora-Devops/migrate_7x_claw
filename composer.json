@@ -1,5 +1,5 @@
 {
-  "name": "islandora/migrate_7x_claw",
+  "name": "islandora-rdm/migrate_7x_claw",
   "description": "Tools to assist in Islandora 7.x to CLAW migrations.",
   "type": "drupal-module",
   "homepage": "https://github.com/Islandora-Devops/migrate_7x_claw",
