@@ -57,6 +57,17 @@ class AuthenticatedXml extends SimpleXml {
           $this->currentItem[$field_name] = reset($values);
         }
       }
+
+      // Make the PID available as a field in the migration
+      // This facilitates migrate_lookup, needed to migrate data
+      // into paragraphs.
+      if (empty($currentItem['PID'])) {
+        $pid_matches = [];
+        preg_match('/\/objects\/(.*?)\/datastreams/', $this->urls[$this->activeUrl], $pid_matches);
+        if (!empty($pid_matches[1])) {
+          $this->currentItem['PID'] = $pid_matches[1];
+        }
+      }
     }
   }
 
