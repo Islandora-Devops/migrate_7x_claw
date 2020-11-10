@@ -93,6 +93,13 @@ From there, you can select all changes and clicking "Import Changes"
 
 ![Import Changes](docs/images/feature_import_changes.png)
 
+### Additional configuration
+
+`TECHMD` datastreams from the source Islandora 7.x are migrated automatically and are added as media. However, by default Islandora 8 also generates a "FITS Technical Metadata" media file for each "Original File" ingested or migrated. The 7.x `TECHMD` datastream and the FITS Technical Metadata file are basically identical. In order to prevent Islandora 8 from generating this redundant FITS output on migration, you should disable the Context that triggers the creation of the FITS Technical Metadata file prior to running your migration.
+
+To do this, in your Islandora 8 site, go to Admin > Structure > Context and disable the "Technical Metadata on ingest" Context. Once your migration is over, re-enable it.
+
+
 ## Running the migrations
 
 You can quickly run all migrations using `drush`:
