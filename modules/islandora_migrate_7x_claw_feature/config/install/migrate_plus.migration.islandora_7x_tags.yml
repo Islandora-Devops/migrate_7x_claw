@@ -15,6 +15,7 @@ source:
   plugin: csv
   path: modules/contrib/migrate_7x_claw/migrate/tags.csv
   header_row_count: 1
+  ids: [id]
   keys:
     - external_uri
 process:
