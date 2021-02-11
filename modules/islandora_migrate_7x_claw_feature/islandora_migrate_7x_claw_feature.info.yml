@@ -1,7 +1,7 @@
 name: 'Migrate 7x Claw Feature'
 description: 'Migration configuration for moving to Islandora CLAW from 7.x'
 type: module
-core: 8.x
+core_version_requirement: ^8 || ^9
 dependencies:
   - migrate_plus
   - migrate_7x_claw
