@@ -675,11 +675,11 @@ process:
     source:
       - '@remote_path'
       - '@local_path'
-    settings:
-      authentication:
-        plugin: basic
-        username: fedoraAdmin
-        password: fedoraAdmin
+    guzzle_options:
+      auth:
+        - fedoraAdmin
+        - fedoraAdmin
+
   uid: constants/creator_uid
 destination:
   plugin: 'entity:file'

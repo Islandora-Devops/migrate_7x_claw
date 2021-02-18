@@ -138,7 +138,7 @@ class MIGRATE7XCLAWSettingsForm extends ConfigFormBase {
       $islandora_person_config->set('source.authentication.password', $form_state->getValue('oldfedorapsswd'));
       $islandora_subject_config->set('source.authentication.password', $form_state->getValue('oldfedorapsswd'));
       // File needs a special authentication configuration to pass to Guzzle.
-      $islandora_files_config->set('process.uri.guzzle_options.auth', [$form_state->getValue('oldfedoraUsername'), $form_state->getValue('oldfedorapasswd')]);
+      $islandora_files_config->set('process.uri.guzzle_options.auth', [$form_state->getValue('oldfedoraUsername'), $form_state->getValue('oldfedorapsswd')]);
     }
 
     $config->set('solr-endpoint-url', $form_state->getValue('solr-endpoint-url'));
