@@ -365,6 +365,7 @@ process:
       application/x-x509-ca-cert: crt
       application/x-x509-ca-cert: der
       application/x-x509-user-cert: crt
+      application/x-zip: zip
       application/x-zip-compressed: zip
       application/xml: xml
       application/zip: zip
