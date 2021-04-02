@@ -199,6 +199,20 @@ class Islandora extends SourcePluginExtension {
   /**
    * {@inheritdoc}
    */
+  public function rewind() {
+    parent::rewind();
+    // Due to the batching approach we need to have find the first batch with
+    // an actual result, otherwise the caller will assume that the results 
+    // have been exhausted. Go until we are on the last batch.
+    while (!$this->getIterator()->valid() && ($this->count - ($this->batchCounter * $this->batchSize) > $this->batchSize)) {
+      $this->fetchNextBatch();
+      $this->next();
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   protected function doCount() {
     if (is_null($this->count)) {
       if ($this->processing == self::DATASTREAM_TYPE) {
