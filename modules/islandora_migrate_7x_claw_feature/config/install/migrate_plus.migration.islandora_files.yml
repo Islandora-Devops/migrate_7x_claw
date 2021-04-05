@@ -458,7 +458,6 @@ process:
       auth:
         - fedoraAdmin
         - fedoraAdmin
-​
   uid: constants/creator_uid
 destination:
   plugin: 'entity:file'
