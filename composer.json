@@ -1,11 +1,10 @@
 {
-  "name": "islandora-rdm/migrate_7x_claw",
+  "name": "islandora/migrate_7x_claw",
   "description": "Tools to assist in Islandora 7.x to CLAW migrations.",
   "type": "drupal-module",
   "homepage": "https://github.com/Islandora-Devops/migrate_7x_claw",
   "support": {
     "issues": "https://github.com/Islandora-CLAW/CLAW/issues",
-    "irc": "irc://irc.freenode.org/islandora",
     "source": "https://github.com/Islandora-Devops/migrate_7x_claw"
   },
   "license": "GPL-2.0-or-later",
