@@ -15,7 +15,7 @@
     }
   ],
   "require": {
-    "drupal/migrate_plus": "*",
+    "drupal/migrate_plus": "^5",
     "jonathangreen/tuque": "dev-master"
   },
   "require-dev": {
