@@ -14,8 +14,10 @@ label: '7.x Tags Migration from CSV'
 source:
   plugin: csv
   path: modules/contrib/migrate_7x_claw/migrate/tags.csv
-  header_offset: 0
+  header_row_count: 1
   ids:
+    - vid
+  keys:
     - external_uri
 process:
   name: name
