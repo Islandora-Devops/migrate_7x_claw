@@ -6,6 +6,8 @@ dependencies:
       - migrate_7x_claw
       - migrate_plus
       - islandora
+_core:
+  default_config_hash: uC85xvYZ_ID8nCAyQOKeXgq-Q0yiEIhHLmhNLM8mzL0
 id: islandora_objects
 class: null
 field_plugin_method: null
@@ -15,125 +17,129 @@ migration_group: islandora_7x
 label: 'Islandora Objects'
 source:
   plugin: islandora
-  solr_base_url: 'http://10.0.2.2:8080/solr'
-  q: 'RELS_EXT_isMemberOfCollection_uri_ms:"info:fedora/islandora:sp_basic_image_collection" OR PID:"islandora:sp_basic_image_collection"' 
+  solr_base_url: 'http://10.0.2.2:8090/solr'
+  q: 'PID:ilives\:209051*'
   row_type: solr
-  fedora_base_url: 'http://10.0.2.2:8080/fedora'
+  fedora_base_url: 'http://10.0.2.2:8090/fedora'
   data_fetcher_plugin: http
   authentication:
     plugin: basic
     username: fedoraAdmin
-    password: fedoraAdmin
-  data_parser_plugin: json_list 
-  item_selector: '/response/docs'
+    password: sqr1j3rky
+  data_parser_plugin: json_list
+  item_selector: /response/docs
   constants:
     creator_uid: 1
   fields:
     -
       name: PID
       label: PID
-      selector: 'PID'
+      selector: PID
     -
       name: model
       label: 'Content Model'
-      selector: 'RELS_EXT_hasModel_uri_s'
+      selector: RELS_EXT_hasModel_uri_s
     -
       name: created
       label: 'Created Date'
-      selector: 'fgs_createdDate_dt'
+      selector: fgs_createdDate_dt
     -
       name: lastmodified
       label: 'Last Modified Date'
-      selector: 'fgs_lastModifiedDate_dt'
+      selector: fgs_lastModifiedDate_dt
     -
-      name: title 
-      label: 'Title'
-      selector: 'fgs_label_s'
+      name: title
+      label: Title
+      selector: fgs_label_s
     -
-      name: subtitle 
-      label: 'Subtitle'
-      selector: 'mods_titleInfo_subTitle_s'
+      name: subtitle
+      label: Subtitle
+      selector: mods_titleInfo_subTitle_s
     -
-      name: resource_type 
+      name: resource_type
       label: 'Type of Resource'
-      selector: 'mods_typeOfResource_s'
+      selector: mods_typeOfResource_s
     -
-      name: identifier 
-      label: 'Identifier'
-      selector: 'mods_identifier_local_s'
+      name: identifier
+      label: Identifier
+      selector: mods_identifier_local_s
     -
-      name: description 
-      label: 'Description'
-      selector: 'mods_abstract_s'
+      name: description
+      label: Description
+      selector: mods_abstract_s
     -
-      name: extent 
+      name: extent
       label: 'Physical Extent'
-      selector: 'mods_physicalDescription_extent_s'
+      selector: mods_physicalDescription_extent_s
     -
       name: member_of
       label: 'Member Of'
-      selector: 'RELS_EXT_isMemberOfCollection_uri_ms'
+      selector: RELS_EXT_isMemberOfCollection_uri_ms
     -
-      name: person_agents 
-      label: "Person agents"
-      selector: 'mods_name_personal_namePart_ms'
+      name: part_of
+      label: 'Part Of'
+      selector: RELS_EXT_isMemberOf_uri_ms
+    -
+      name: person_agents
+      label: 'Person agents'
+      selector: mods_name_personal_namePart_ms
     -
       name: person_roles
-      label: "Person roles"
-      selector: 'mods_name_personal_role_roleTerm_text_ms'
+      label: 'Person roles'
+      selector: mods_name_personal_role_roleTerm_text_ms
     -
-      name: corporate_agents 
-      label: "Corporate agents"
-      selector: 'mods_name_corporate_namePart_ms'
+      name: corporate_agents
+      label: 'Corporate agents'
+      selector: mods_name_corporate_namePart_ms
     -
       name: corporate_roles
-      label: "Corporate roles"
-      selector: 'mods_name_corporate_role_roleTerm_text_ms'
+      label: 'Corporate roles'
+      selector: mods_name_corporate_role_roleTerm_text_ms
     -
-      name: topic 
-      label: "Topics"
-      selector: 'mods_subject_topic_ms'
+      name: topic
+      label: Topics
+      selector: mods_subject_topic_ms
     -
       name: temporal
-      label: "Temporal"
-      selector: 'mods_subject_temporal_ms'
+      label: Temporal
+      selector: mods_subject_temporal_ms
     -
-      name: geographic 
-      label: "Geographic"
-      selector: 'mods_subject_geographic_ms'
+      name: geographic
+      label: Geographic
+      selector: mods_subject_geographic_ms
     -
-      name: continent 
-      label: "Continent"
-      selector: 'mods_subject_hierarchicalGeographic_continent_ms'
+      name: continent
+      label: Continent
+      selector: mods_subject_hierarchicalGeographic_continent_ms
     -
-      name: country 
-      label: "Country"
-      selector: 'mods_subject_hierarchicalGeographic_country_ms'
+      name: country
+      label: Country
+      selector: mods_subject_hierarchicalGeographic_country_ms
     -
-      name: province 
-      label: "Province"
-      selector: 'mods_subject_hierarchicalGeographic_province_ms'
+      name: province
+      label: Province
+      selector: mods_subject_hierarchicalGeographic_province_ms
     -
-      name: region 
-      label: "Region"
-      selector: 'mods_subject_hierarchicalGeographic_region_ms'
+      name: region
+      label: Region
+      selector: mods_subject_hierarchicalGeographic_region_ms
     -
-      name: county 
-      label: "County"
-      selector: 'mods_subject_hierarchicalGeographic_county_ms'
+      name: county
+      label: County
+      selector: mods_subject_hierarchicalGeographic_county_ms
     -
-      name: city 
-      label: "City"
-      selector: 'mods_subject_hierarchicalGeographic_city_ms'
+      name: city
+      label: City
+      selector: mods_subject_hierarchicalGeographic_city_ms
     -
       name: city_section
-      label: "City Section"
-      selector: 'mods_subject_hierarchicalGeographic_citySection_ms'
+      label: 'City Section'
+      selector: mods_subject_hierarchicalGeographic_citySection_ms
   ids:
     PID:
       type: string
 process:
-  title: title 
+  title: title
   field_alternative_title: subtitle
   field_identifier: identifier
   field_pid: PID
@@ -157,34 +163,64 @@ process:
     source: lastmodified
     settings:
       validate_format: false
-  field_member_of:
+  _field_tmp_member_of_src1:
     -
       plugin: skip_on_empty
       method: process
       source: member_of
+    -
+      plugin: log
+  _field_tmp_member_of_src2:
+    -
+      plugin: skip_on_empty
+      method: process
+      source: part_of
+    -
+      plugin: log
+  _field_tmp_member_of:
+    -
+      plugin: skip_on_empty
+      method: process
+      source:
+        - '@_field_tmp_member_of_src1'
+        - '@_field_tmp_member_of_src2'
+    -
+      plugin: flatten
+    -
+      plugin: filter_on_condition
+      condition: 'not:empty'
+    -
+      plugin: extract
+      index:
+        - '0'
+  field_member_of:
+    -
+      plugin: skip_on_empty
+      method: process
+      source: '@_field_tmp_member_of'
     -
       plugin: substr
       start: 12
     -
       plugin: migration_lookup
       migration: islandora_objects
-      no_stub: true
+      no_stub: false
   field_model:
     -
       plugin: skip_on_empty
       method: process
-      source: model 
+      source: model
     -
       plugin: static_map
       map:
-        info:fedora/islandora:collectionCModel: http://purl.org/dc/dcmitype/Collection
-        info:fedora/islandora:sp_basic_image: http://purl.org/coar/resource_type/c_c513
-        info:fedora/islandora:sp-audioCModel: http://purl.org/coar/resource_type/c_18cc
-        info:fedora/islandora:sp_videoCModel: http://purl.org/coar/resource_type/c_12ce
-      default_value: http://purl.org/coar/resource_type/c_1843
+        'info:fedora/islandora:collectionCModel': 'http://purl.org/dc/dcmitype/Collection'
+        'info:fedora/islandora:sp_basic_image': 'http://purl.org/coar/resource_type/c_c513'
+        'info:fedora/islandora:sp-audioCModel': 'http://purl.org/coar/resource_type/c_18cc'
+        'info:fedora/islandora:sp_videoCModel': 'http://purl.org/coar/resource_type/c_12ce'
+      default_value: 'http://purl.org/coar/resource_type/c_1843'
     -
       plugin: entity_lookup
-      value_key: field_external_uri 
+      value_key: field_external_uri
       bundle_key: vid
       bundle: islandora_models
       entity_type: taxonomy_term
@@ -193,99 +229,98 @@ process:
     -
       plugin: skip_on_empty
       method: process
-      source: resource_type 
+      source: resource_type
     -
       plugin: static_map
       map:
-        'still image': http://purl.org/dc/dcmitype/StillImage
-        'text': http://purl.org/dc/dcmitype/Text
-        'cartographic': http://purl.org/dc/dcmitype/Image
-        'notated music': http://purl.org/dc/dcmitype/Text
-        'sound recording': http://purl.org/dc/dcmitype/Sound
-        'sound recording-musical': http://purl.org/dc/dcmitype/Sound
-        'sound recording-nonmusical': http://purl.org/dc/dcmitype/Sound
-        'moving image': http://purl.org/dc/dcmitype/MovingImage
-        'three dimensional object': http://purl.org/dc/dcmitype/Image
-        'software, multimedia': http://purl.org/dc/dcmitype/Software
-        # Need to figure out what to do wtih 'mixed material'
-        # There is no obvious mapping at https://www.loc.gov/standards/mods/mods-dcsimple.html
+        'still image': 'http://purl.org/dc/dcmitype/StillImage'
+        text: 'http://purl.org/dc/dcmitype/Text'
+        cartographic: 'http://purl.org/dc/dcmitype/Image'
+        'notated music': 'http://purl.org/dc/dcmitype/Text'
+        'sound recording': 'http://purl.org/dc/dcmitype/Sound'
+        'sound recording-musical': 'http://purl.org/dc/dcmitype/Sound'
+        'sound recording-nonmusical': 'http://purl.org/dc/dcmitype/Sound'
+        'moving image': 'http://purl.org/dc/dcmitype/MovingImage'
+        'three dimensional object': 'http://purl.org/dc/dcmitype/Image'
+        'software, multimedia': 'http://purl.org/dc/dcmitype/Software'
+        collection: 'http://purl.org/dc/dcmitype/Collection'
     -
       plugin: entity_lookup
-      value_key: field_external_uri 
+      value_key: field_external_uri
       bundle_key: vid
       bundle: resource_types
       entity_type: taxonomy_term
       ignore_case: true
   temp_person:
     -
-      plugin: migration_lookup 
+      plugin: migration_lookup
       migration: islandora_person
       source: person_agents
-      no_stub: true
+      no_stub: false
     -
-      plugin: typed_relation 
+      plugin: typed_relation
       role_source: person_roles
   temp_corporate:
     -
-      plugin: migration_lookup 
+      plugin: migration_lookup
       migration: islandora_corporate
       source: corporate_agents
       no_stub: true
     -
-      plugin: typed_relation 
+      plugin: typed_relation
       role_source: corporate_roles
   field_linked_agent:
     plugin: merge_ignore_empty
     source:
       - '@temp_person'
       - '@temp_corporate'
-  temp_topic: 
+  temp_topic:
     plugin: migration_lookup
     migration: islandora_subject
     source: topic
     no_stub: true
   temp_temporal:
-    plugin: migration_lookup 
+    plugin: migration_lookup
     migration: islandora_subject
-    source: temporal 
+    source: temporal
     no_stub: true
   temp_geographic:
-    plugin: migration_lookup 
+    plugin: migration_lookup
     migration: islandora_geographic
     source: geographic
     no_stub: true
   temp_continent:
-    plugin: migration_lookup 
+    plugin: migration_lookup
     migration: islandora_geographic
     source: continent
     no_stub: true
   temp_country:
-    plugin: migration_lookup 
+    plugin: migration_lookup
     migration: islandora_geographic
     source: country
     no_stub: true
   temp_province:
-    plugin: migration_lookup 
+    plugin: migration_lookup
     migration: islandora_geographic
-    source: province 
+    source: province
     no_stub: true
   temp_region:
-    plugin: migration_lookup 
+    plugin: migration_lookup
     migration: islandora_geographic
-    source: region 
+    source: region
     no_stub: true
   temp_county:
-    plugin: migration_lookup 
+    plugin: migration_lookup
     migration: islandora_geographic
-    source: county 
+    source: county
     no_stub: true
   temp_city:
-    plugin: migration_lookup 
+    plugin: migration_lookup
     migration: islandora_geographic
-    source: city 
+    source: city
     no_stub: true
   temp_city_section:
-    plugin: migration_lookup 
+    plugin: migration_lookup
     migration: islandora_geographic
     source: city_section
     no_stub: true
@@ -312,4 +347,6 @@ migration_dependencies:
     - migrate_plus.migration.islandora_subject
     - migrate_plus.migration.islandora_geographic
     - migrate_plus.migration.islandora_7x_tags
-  optional: { }
+  optional: {  }
+
+
