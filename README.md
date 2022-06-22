@@ -1,6 +1,6 @@
 ## Introduction
 This module contains plugins to import data from a Fedora 3 Islandora instance
-into an Islandora 8 instance. It also contains a feature as a submodule
+into an Islandora 2 (previously called Islandora 8) instance. It also contains a feature as a submodule
 that contains some example migrations.  The example migrations are based on forms from vanilla Islandora 7.x solution
 packs, and are meant to work with the fields defined in `islandora_defaults`.  If you customized your MODS forms, then you
 will also need to customize the example migration and `islandora_defaults`.
@@ -37,7 +37,7 @@ drush en islandora_migrate_7x_claw_feature
 ## Configuration
 
 By default, the migrations are configured to work with an `islandora_vagrant` instance running on the same host as a
-`claw-playbook` instance, which is convenient for development and testing. But for your Islandora 7.x instance, the
+`Islandora playbook` instance, which is convenient for development and testing. But for your Islandora 7.x instance, the
 following config will need to be set the same way on the source plugin of each migration (except for the
 "7.x Tags Migration from CSV" migration):
 
@@ -77,19 +77,22 @@ migrations are configured to look for `islandora:sp_basic_image_collection` and 
     RELS_EXT_isMemberOfCollection_uri_ms:"info:fedora/islandora:sp_basic_image_collection" OR PID:"islandora:sp_basic_image_collection"
   ```
 You can easily import a collection of your own by changing the PID in the above query, or you can provide your own
-query to migrate over objects in other ways (such as per content model, in order by date created, etc...).  If you can write a Solr select query for it, you can migrate it into Islandora 8.  Omitting `q` from configuration will default to `*:*`
-for the Solr query.  
+query to migrate over objects in other ways (such as per content model, in order by date created, etc...).  If you can write a Solr select query for it, you can migrate it into Islandora 2.  Omitting `q` from configuration will default to `*:*`
+for the Solr query.
 
 Once you've updated the configuration, you need to re-import the feature to load your changes.  You can do this with `drush`:
 ```
 drush -y fim islandora_migrate_7x_claw_feature
 ```
 
-You can also use the UI to import the feature if you go to `admin/config/development/features` and click on the `Changed` link next to "Migrate 7x Claw Feature".
+You can also use the UI to import the feature if you go
+to `admin/config/development/features` and click on
+the `Changed` link next to "Migrate 7x Claw Feature".
+This requires the Migrate Tools module which is no longer installed by default since migrate commands were added to drush 10.x.
 
 ![Changed Link](docs/images/feature_click_changed.png)
 
-From there, you can select all changes and clicking "Import Changes"
+From there, you can select all changes and click "Import Changes"
 
 ![Import Changes](docs/images/feature_import_changes.png)
 
@@ -132,7 +135,7 @@ Here's the original object in Islandora 7.x:
 
 ![Free Smells in 7x](docs/images/free_smells_in_7x.png)
 
-And here it is in Islandora 8:
+And here it is in Islandora 2:
 
 ![Free Smells in Islandora 8](docs/images/free_smells_in_claw.png)
 
@@ -140,7 +143,7 @@ Clicking on the Media tab will reveal all of the datastreams migrated over from 
 
 ![Free Smells Datastreams](docs/images/free_smells_datastreams.png)
 
-And here they are in Islandora 8 as Media:
+And here they are in Islandora 2 as Media:
 
 ![Free Smells Media](docs/images/free_smells_media.png)
 
@@ -168,7 +171,7 @@ This starts the import process from the command line with the username and actio
 ```shell
 $ drush --uri=http://localhost:8000 --userid=1 -y migrate:import --group islandora_7x --update
         └─────────────────────────┘:└────────┘└─┘ └────────────┘ └──────────────────┘ └──────┘
-URL of Islandora 8 ───┘                │       │        │                │                │
+URL of Islandora 2 ───┘                │       │        │                │                │
 User Numeric ID  ──────────────────────┘       │        │                │                │
 send yes to confirmation(optional) ────────────┘        │                │                │
 Module and action ──────────────────────────────────────┘                │                │
