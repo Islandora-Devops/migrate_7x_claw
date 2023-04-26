@@ -1,11 +1,10 @@
 {
   "name": "islandora/migrate_7x_claw",
-  "description": "Tools to assist in Islandora 7.x to CLAW migrations.",
+  "description": "Tools to assist in Islandora Classic 7.x to Islandora 2 migrations.",
   "type": "drupal-module",
   "homepage": "https://github.com/Islandora-Devops/migrate_7x_claw",
   "support": {
-    "issues": "https://github.com/Islandora-CLAW/CLAW/issues",
-    "irc": "irc://irc.freenode.org/islandora",
+    "issues": "https://github.com/Islandora-Devops/migrate_7x_claw/issues",
     "source": "https://github.com/Islandora-Devops/migrate_7x_claw"
   },
   "license": "GPL-2.0-or-later",
@@ -16,7 +15,8 @@
     }
   ],
   "require": {
-    "drupal/migrate_plus": "^4",
+    "drupal/migrate_conditions": "1.x@beta",
+    "drupal/migrate_plus": "^5",
     "jonathangreen/tuque": "dev-master"
   },
   "require-dev": {
